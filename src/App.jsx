@@ -14,23 +14,13 @@ function App() {
   const { modalIsShown } = useSelector((state) => state.authModal);
   const dispatch = useDispatch();
 
+  // hides the login modal
   const handleHideModal = () => {
     dispatch(authModalActions.hideModal());
   };
 
-  // const handleClick = () => {
-  //   dispatch(
-  //     authActions.authenticate({
-  //       mode: "login",
-  //       userData: { username: "AshwinRaut1110", password: "Random@123" },
-  //     })
-  //   );
-  // };
-
-  // const dispatch = useDispatch();
-
   return (
-    <div className="bg-primary-color h-[100vh]">
+    <div className="bg-primary-color min-h-screen">
       <MainNavigation />
       <Outlet />
       <Modal isOpen={modalIsShown} onClose={handleHideModal}>

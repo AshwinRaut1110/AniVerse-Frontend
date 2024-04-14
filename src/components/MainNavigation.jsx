@@ -58,7 +58,7 @@ function MainNavigation() {
         {/* dropdown menu */}
         {showDropdown && (
           <div
-            className="absolute right-0 top-[4.3rem] text-white font-[Lato] space-y-2 bg-black py-2 rounded-md shadow-lg falling-down-animation"
+            className="absolute right-0 top-[4.3rem] text-white font-[Lato] space-y-2 bg-black py-2 rounded-md shadow-lg falling-down-animation z-10"
             ref={dropdownRef}
             onClick={handleCloseDropdown}
           >
