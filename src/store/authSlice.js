@@ -24,7 +24,13 @@ const authSlice = createSlice({
       state.token = null;
       state.user = null;
       localStorage.removeItem("authData");
-      history.navigate(payload.sendTo, { replace: true });
+      history.navigate(payload?.sendTo || "/", { replace: true });
+    },
+    resetAuthState(state) {
+      state.user = null;
+      state.token = null;
+      state.loading = false;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -35,6 +41,7 @@ const authSlice = createSlice({
         // if the auth was successful, set the state and set the local storage
         state.user = payload.data.user;
         state.token = payload.data.token;
+        state.loading = false;
 
         localStorage.setItem(
           "authData",
@@ -51,11 +58,13 @@ const authSlice = createSlice({
     );
 
     builder.addCase(extraActions.authenticate.pending, (state) => {
+      state.error = null;
       state.loading = true;
     });
 
     builder.addCase(extraActions.authenticate.rejected, (state, { error }) => {
-      state.error = error?.info?.message || "Unable to authenticate.";
+      state.loading = false;
+      state.error = error?.message || "Unable to authenticate.";
     });
   },
 });

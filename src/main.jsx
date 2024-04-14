@@ -5,14 +5,13 @@ import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
+import ProfilePage from "./pages/ProfilePage.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    children: [
-      { path: "anime", element: <h1 className="text-black">hello, world</h1> },
-    ],
+    children: [{ path: "profile", element: <ProfilePage /> }],
   },
   ,
 ]);

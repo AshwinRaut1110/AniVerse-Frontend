@@ -3,9 +3,11 @@ import { useSelector } from "react-redux";
 import Auth from "./Auth";
 
 function AuthModal() {
-  const { currentPage } = useSelector((state) => state.authModal);
+  const { currentPage, modalIsShown } = useSelector((state) => state.authModal);
 
-  return <>{["signup", "login"].includes(currentPage) && <Auth />}</>;
+  return (
+    <>{["signup", "login"].includes(currentPage) && modalIsShown && <Auth />}</>
+  );
 }
 
 export default AuthModal;

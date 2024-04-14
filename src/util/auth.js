@@ -11,9 +11,9 @@ export async function userAuth({ mode, userData }) {
   );
 
   if (!response.ok) {
-    const error = new Error("Some error occurred");
+    const errorResponse = await response.json();
+    const error = new Error(errorResponse.message);
     error.code = response.status;
-    error.info = await response.json();
     throw error;
   }
 

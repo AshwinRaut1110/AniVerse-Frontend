@@ -1,28 +1,79 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import senko from "../../assets/login.png";
 import Input from "../UI/Input";
 import { useDispatch, useSelector } from "react-redux";
 import { authModalActions } from "../../store/authModalSlice";
+import { authActions } from "../../store/authSlice";
+import ErrorComponent from "../UI/ErrorComponent";
+import nyanLoader from "../../assets/nyan-loader.gif";
+
+const isEmail = (email) => {
+  return email.match(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  );
+};
+
+const initialState = {
+  username: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  emailOrUsername: "",
+};
 
 function Auth() {
+  // auth page state
   const { currentPage } = useSelector((state) => state.authModal);
   const dispatch = useDispatch();
 
-  const [userAuthData, setUserAuthData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    emailOrUsername: "",
-  });
+  // authed user state
+  const user = useSelector((state) => state.auth);
 
+  // user input state
+  const [userAuthData, setUserAuthData] = useState({ ...initialState });
+
+  // handlers
   const handleInputChange = (inputField, value) => {
     setUserAuthData((prevValue) => ({ ...prevValue, [inputField]: value }));
   };
 
   const handleAuthentication = (e) => {
     e.preventDefault();
+
+    const userData = {};
+
+    // creating the userData object based on wether we are logging in or signing up
+    if (currentPage === "login") {
+      if (isEmail(userAuthData.emailOrUsername)) {
+        userData.email = userAuthData.emailOrUsername;
+      } else {
+        userData.username = userAuthData.emailOrUsername;
+      }
+
+      userData.password = userAuthData.password;
+    } else {
+      userData.email = userAuthData.email;
+      userData.username = userAuthData.username;
+      userData.password = userAuthData.password;
+      userData.confirmPassword = userAuthData.confirmPassword;
+    }
+
+    setUserAuthData({ ...initialState });
+
+    dispatch(authActions.authenticate({ mode: currentPage, userData }));
   };
+
+  const handleHideError = () => {
+    // reset the auth state which is unmount the error
+    dispatch(authActions.resetAuthState());
+  };
+
+  useEffect(() => {
+    if (user.user) {
+      // when the user successfully logs in or is already logged in then close the modal
+      dispatch(authModalActions.hideModal());
+    }
+  }, [user]);
 
   const handleSwitchPages = () => {
     dispatch(
@@ -45,12 +96,17 @@ function Auth() {
             : "Register to dicover an amazing anime community"}
         </p>
 
+        {user.error && (
+          <ErrorComponent onHideError={handleHideError} errors={user.error} />
+        )}
+
         <form className="space-y-5" onSubmit={handleAuthentication}>
           {currentPage === "signup" && (
             <>
               <Input
                 id="username"
                 label="Username"
+                type="text"
                 value={userAuthData.username}
                 onChange={(e) => handleInputChange(e.target.id, e.target.value)}
               />
@@ -58,6 +114,7 @@ function Auth() {
               <Input
                 id="email"
                 label="Email"
+                type="email"
                 value={userAuthData.email}
                 onChange={(e) => handleInputChange(e.target.id, e.target.value)}
               />
@@ -68,6 +125,7 @@ function Auth() {
             <Input
               id="emailOrUsername"
               label="Username or email"
+              type="text"
               value={userAuthData.emailOrUsername}
               onChange={(e) => handleInputChange(e.target.id, e.target.value)}
             />
@@ -76,6 +134,7 @@ function Auth() {
           <Input
             id="password"
             label="Password"
+            type="password"
             value={userAuthData.password}
             onChange={(e) => handleInputChange(e.target.id, e.target.value)}
           />
@@ -84,15 +143,26 @@ function Auth() {
             <Input
               id="confirmPassword"
               label="Confirm Password"
+              type="password"
               value={userAuthData.confirmPassword}
               onChange={(e) => handleInputChange(e.target.id, e.target.value)}
             />
           )}
 
           <div className="flex w-full items-end justify-end">
-            <button className="bg-white px-10 sm:px-16 py-3 sm:py-5 text-lg rounded-full active:scale-95">
-              {currentPage === "login" ? "Log In" : "Sign Up"}
-            </button>
+            {user.loading && (
+              <img
+                src={nyanLoader}
+                alt="nyan loader animation"
+                className="h-14"
+              />
+            )}
+
+            {!user.loading && (
+              <button className="bg-white px-10 sm:px-16 py-3 sm:py-5 text-lg rounded-full active:scale-95">
+                {currentPage === "login" ? "Log In" : "Sign Up"}
+              </button>
+            )}
           </div>
 
           <p
