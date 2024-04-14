@@ -7,8 +7,14 @@ import { Provider } from "react-redux";
 import store from "./store/store.js";
 
 const router = createBrowserRouter([
-  { path: "/", element: <App /> },
-  { path: "login", element: <h1 className="text-black">hello, world</h1> },
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      { path: "anime", element: <h1 className="text-black">hello, world</h1> },
+    ],
+  },
+  ,
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

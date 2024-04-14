@@ -33,18 +33,20 @@ const authSlice = createSlice({
       extraActions.authenticate.fulfilled,
       (state, { payload }) => {
         // if the auth was successful, set the state and set the local storage
-        state.user = payload.user;
-        state.token = payload.token;
+        state.user = payload.data.user;
+        state.token = payload.data.token;
 
         localStorage.setItem(
           "authData",
           JSON.stringify({
-            user: payload.user,
-            token: payload.token,
+            user: payload.data.user,
+            token: payload.data.token,
           })
         );
 
-        history.navigate(history.location.state.from || "/", { replace: true });
+        history.navigate(history.location.state?.from || "/", {
+          replace: true,
+        });
       }
     );
 

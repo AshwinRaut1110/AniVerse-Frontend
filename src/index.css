@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,4 +7,97 @@
 :root {
   --primary-color: #121212;
   --secondary-color: #212121;
+}
+
+.text-gradient-animation {
+  background: linear-gradient(
+    to right,
+    #7953cd 20%,
+    #00affa 30%,
+    #0190cd 70%,
+    #764ada 80%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  background-size: 500% auto;
+  animation: textGradient 5s ease-in-out infinite alternate;
+}
+
+@keyframes textGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.falling-down-animation {
+  animation: fallingDown 75ms linear;
+}
+
+@keyframes fallingDown {
+  0% {
+    transform: translateY(-30px);
+  }
+  25% {
+    transform: translateY(-20px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  75% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: transparent;
+}
+
+.input-container:focus-within label {
+  transform: translate(0, 7px) scale(0.75);
+}
+
+.input-container label.active {
+  transform: translate(0, 7px) scale(0.75);
+}
+
+.input-container label {
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 0 12px;
+  color: #999;
+  pointer-events: none;
+
+  position: absolute;
+  transform: translate(0, 18px) scale(1);
+
+  transform-origin: top left;
+  transition: all 0.2s ease-out;
+}
+
+.input-container input {
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 16px 0px 10px;
+  outline: 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: transparent;
+  font-family: "Lato";
+  font-size: 16px;
+  color: white;
+}
+
+.input-container input:focus {
+  box-shadow: 0 0 0 2px #79b1ff;
 }
