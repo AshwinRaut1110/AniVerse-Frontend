@@ -85,8 +85,8 @@
   transition: all 0.2s ease-out;
 }
 
-.input-container input {
-  width: 100%;
+.input-container input,
+textarea {
   min-height: 56px;
   padding: 14px 16px 0px 10px;
   outline: 0;
@@ -98,6 +98,22 @@
   color: white;
 }
 
-.input-container input:focus {
+.input-container input:focus,
+textarea:focus {
   box-shadow: 0 0 0 2px #79b1ff;
+}
+
+.select::after {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  content: "▼";
+  font-size: 1rem;
+  right: 10px;
+  position: absolute;
+  color: white;
+  top: 0;
+  bottom: 0;
+  margin-top: auto;
+  margin-bottom: auto;
 }

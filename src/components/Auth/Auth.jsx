@@ -108,6 +108,7 @@ function Auth() {
                 label="Username"
                 type="text"
                 value={userAuthData.username}
+                className="w-full"
                 onChange={(e) => handleInputChange(e.target.id, e.target.value)}
               />
 
@@ -116,6 +117,7 @@ function Auth() {
                 label="Email"
                 type="email"
                 value={userAuthData.email}
+                className="w-full"
                 onChange={(e) => handleInputChange(e.target.id, e.target.value)}
               />
             </>
@@ -127,6 +129,7 @@ function Auth() {
               label="Username or email"
               type="text"
               value={userAuthData.emailOrUsername}
+              className="w-full"
               onChange={(e) => handleInputChange(e.target.id, e.target.value)}
             />
           )}
@@ -136,6 +139,7 @@ function Auth() {
             label="Password"
             type="password"
             value={userAuthData.password}
+            className="w-full"
             onChange={(e) => handleInputChange(e.target.id, e.target.value)}
           />
 
@@ -145,6 +149,7 @@ function Auth() {
               label="Confirm Password"
               type="password"
               value={userAuthData.confirmPassword}
+              className="w-full"
               onChange={(e) => handleInputChange(e.target.id, e.target.value)}
             />
           )}

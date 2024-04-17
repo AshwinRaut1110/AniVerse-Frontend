@@ -38,8 +38,12 @@ function MainNavigation() {
   return (
     <header className="flex justify-between items-center bg-secondary-color px-5 py-[0.8rem]">
       <Link to="/">
-        <h1 className="text-5xl font-bold text-gradient-animation select-none">
-          AniVerse
+        <h1
+          // className="text-5xl font-bold text-gradient-animation select-none"
+          className="text-5xl font-bold select-none"
+        >
+          <span className="text-[#007bff]">AniVerse</span>
+          {/* <span className="text-orange-500">Verse</span> */}
         </h1>
       </Link>
 

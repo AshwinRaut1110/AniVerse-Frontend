@@ -1,4 +1,5 @@
 import store from "../store/store";
+import { QueryClient } from "@tanstack/react-query";
 
 const getAuthToken = () => {
   return store.getState().auth.token?.token;
@@ -21,3 +22,5 @@ const handleResponse = async (response) => {
 
   return await response.json();
 };
+
+export const queryClient = new QueryClient();

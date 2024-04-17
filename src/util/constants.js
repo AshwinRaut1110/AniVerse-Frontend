@@ -1,0 +1,18 @@
+export const GENRES = [
+  "action",
+  "adventure",
+  "avant Garde",
+  "award Winning",
+  "comedy",
+  "drama",
+  "fantasy",
+  "gourmet",
+  "horror",
+  "mystery",
+  "romance",
+  "sci-Fi",
+  "slice of Life",
+  "sports",
+  "supernatural",
+  "suspense",
+];
