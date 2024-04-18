@@ -8,6 +8,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import store from "./store/store.js";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import AddNewAnimePage from "./pages/addNewAnimePage.jsx";
+import EditAnimePage from "./pages/editAnimePage.jsx";
 import { queryClient } from "./util/http.js";
 
 const router = createBrowserRouter([
@@ -17,11 +18,15 @@ const router = createBrowserRouter([
     children: [
       { path: "profile", element: <ProfilePage /> },
       {
-        path: "anime",
+        path: "studio",
         children: [
           {
-            path: "new",
+            path: "",
             element: <AddNewAnimePage />,
+          },
+          {
+            path: ":animeId",
+            element: <EditAnimePage />,
           },
         ],
       },

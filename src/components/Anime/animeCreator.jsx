@@ -1,11 +1,17 @@
-import { PencilIcon, PhotoIcon } from "@heroicons/react/24/outline";
+import { PencilIcon } from "@heroicons/react/24/outline";
 import Input from "../UI/Input";
 import { useState } from "react";
 import Select from "../UI/Select";
-import Date from "../UI/Date";
 import { GENRES } from "../../util/constants";
 import DynamicInputList from "../UI/DynamicInputList";
 import { useMutation } from "@tanstack/react-query";
+import { createAnime, updateAnime } from "../../util/http";
+import ErrorComponent from "../UI/ErrorComponent";
+import DateInput from "../UI/Date";
+import { useParams } from "react-router-dom";
+import RelatedAnimesInput from "../UI/RelatedAnimesInput";
+import { useDispatch } from "react-redux";
+import { notificationActions } from "../../store/NotificationSlice";
 
 const initialState = {
   names: {
@@ -32,16 +38,28 @@ const initialState = {
   relatedAnimes: [""],
 };
 
-function animeCreator() {
+function animeCreator({ existingAnimeData }) {
+  const { animeId } = useParams();
+
   // States
-  const [animeData, setAnimeData] = useState(initialState);
-  const [genres, setGenres] = useState(initialState.genres);
-  const [producers, setProducers] = useState(initialState.producers || [""]);
-  const [studios, setStudios] = useState(initialState.studios || [""]);
-  const [description, setDescription] = useState(initialState.description);
-  const [relatedAnimes, setRelatedAnimes] = useState(
-    initialState.relatedAnimes || [""]
+  const [animeData, setAnimeData] = useState(existingAnimeData || initialState);
+  const [genres, setGenres] = useState(
+    existingAnimeData?.genres || initialState.genres
   );
+  const [producers, setProducers] = useState(
+    existingAnimeData?.producers || initialState.producers || [""]
+  );
+  const [studios, setStudios] = useState(
+    existingAnimeData?.studios || initialState.studios || [""]
+  );
+  const [description, setDescription] = useState(
+    existingAnimeData?.description || initialState.description
+  );
+  const [relatedAnimes, setRelatedAnimes] = useState(
+    existingAnimeData?.relatedAnimes || initialState.relatedAnimes || [""]
+  );
+
+  const [showError, setShowError] = useState(false);
 
   const [banner, setBanner] = useState();
   const [bannerPreview, setBannerPreview] = useState("");
@@ -49,8 +67,27 @@ function animeCreator() {
   const [thumbnail, setThumbnail] = useState();
   const [thumbnailPreview, setThumbnailPreview] = useState("");
 
+  // dispatch
+  const dispatch = useDispatch();
+
   // mutation for sending the new anime data to the api
-  const { mutate, isPending, isError, error } = useMutation({});
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: animeId ? updateAnime : createAnime,
+    onSuccess: function (data) {
+      dispatch(
+        notificationActions.showSuccessNotification({
+          title: "Success",
+          message: `${data.data.anime.names.english} was ${
+            animeId ? "updated" : "added"
+          } successfully.`,
+        })
+      );
+    },
+    onError: function (error) {
+      setShowError(true);
+      console.log(error);
+    },
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -74,7 +111,10 @@ function animeCreator() {
       description,
     };
 
-    formData("animeData", JSON.stringify(newAnime));
+    formData.append("animeData", JSON.stringify(newAnime));
+
+    if (animeId) mutate({ formData, animeId });
+    else mutate(formData);
   };
 
   const handleNameChange = (language, value) => {
@@ -143,16 +183,20 @@ function animeCreator() {
     bannerPreview.readAsDataURL(bannerFile);
   };
 
+  const handleHideError = () => {
+    setShowError(false);
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center pt-20">
+    <div className="flex w-full flex-col items-center justify-center pt-20">
       {/* banner container */}
       <label className="relative group cursor-pointer" htmlFor="anime-banner">
-        {bannerPreview && (
+        {(bannerPreview || animeData.banner) && (
           <PencilIcon className="hidden absolute text-gray-300 h-10 top-0 right-0 bottom-0 left-0 mt-auto mr-auto mb-auto ml-auto group-hover:block" />
         )}
 
-        {!bannerPreview && (
-          <div className="flex items-center justify-center h-[225px] sm:h-[300px] md:h-[400px] lg:h-[700px] w-[398px] sm:w-[531px] md:w-[708px] lg:w-[1250px] border-2 border-white">
+        {!bannerPreview && !animeData.banner && (
+          <div className="flex items-center justify-center w-[95vw] aspect-[1.77/1] border-2 border-white ">
             <p className="text-white font-medium font-[Lato]">
               <span className="text-gray-400">Click to upload or </span>
               <span>Drag and Drop the banner</span>
@@ -160,9 +204,13 @@ function animeCreator() {
           </div>
         )}
 
-        {bannerPreview && (
-          <div className="flex items-center justify-center h-[235px] sm:h-[300px] md:h-[400px] lg:h-[700px] w-[415px] sm:w-[531px] md:w-[708px] lg:w-[1250px] border-2 border-white">
-            <img src={bannerPreview} alt="banner" className="w-full h-full" />
+        {(bannerPreview || animeData.banner) && (
+          <div className="flex items-center justify-center w-[95vw] [1.77/1] border-2 border-white mx-auto ">
+            <img
+              src={bannerPreview || animeData.banner}
+              alt="banner"
+              className="w-full h-full"
+            />
           </div>
         )}
 
@@ -173,6 +221,7 @@ function animeCreator() {
           id="anime-banner"
           className="hidden"
           onChange={handleBannerChanged}
+          loading="lazy"
         />
       </label>
 
@@ -182,17 +231,12 @@ function animeCreator() {
           className="relative group cursor-pointer"
           htmlFor="anime-thumbnail"
         >
-          {thumbnailPreview && (
+          {(thumbnailPreview || animeData.thumbnail) && (
             <PencilIcon className="hidden absolute text-gray-300 h-10 top-0 right-0 bottom-0 left-0 mt-auto mr-auto mb-auto ml-auto group-hover:block" />
           )}
-          {/* {!thumbnailPreview && (
-          <div className="flex items-center justify-center h-[504px] md:h-[650px] w-[350px] md:w-[450px] border-2 border-white">
-            <PhotoIcon className="text-white h-8" />
-          </div>
-        )} */}
 
-          {!thumbnailPreview && (
-            <div className="flex items-center justify-center h-[504px] md:h-[650px] w-[350px] md:w-[450px] border-2 border-white">
+          {!thumbnailPreview && !animeData.thumbnail && (
+            <div className="flex items-center justify-center h-[504px] lg:h-[650px] w-[350px] lg:w-[450px] border-2 border-white">
               <p className="text-white font-medium font-[Lato]">
                 <span className="text-gray-400">Click to upload or </span>
                 <span>Drag and Drop the thumbnail</span>
@@ -200,12 +244,13 @@ function animeCreator() {
             </div>
           )}
 
-          {thumbnailPreview && (
-            <div className="flex items-center justify-center h-[504px] md:h-[650px] w-[350px] md:w-[450px] border-2 border-white">
+          {(thumbnailPreview || animeData.thumbnail) && (
+            <div className="flex items-center justify-center h-[504px] lg:h-[650px] w-[350px] lg:w-[450px] border-2 border-white">
               <img
-                src={thumbnailPreview}
+                src={thumbnailPreview || animeData.thumbnail}
                 alt="thumbnail"
                 className="w-full h-full"
+                loading="lazy"
               />
             </div>
           )}
@@ -222,6 +267,14 @@ function animeCreator() {
 
         {/* details div */}
         <form onSubmit={handleSubmit} className="p-5 flex-grow space-y-5">
+          {/* error modal */}
+          {showError && isError && (
+            <ErrorComponent
+              errors={error.info?.message || error.message}
+              onHideError={handleHideError}
+            />
+          )}
+
           {/* anime names div */}
           <div className="grid grid-rows-2 md:grid-rows-1 md:grid-cols-2 gap-y-4 md:gap-y-0 md:gap-x-4">
             {Object.keys(animeData.names).map((language) => (
@@ -329,7 +382,7 @@ function animeCreator() {
 
           {/* start and end date div */}
           <div className="grid grid-rows-3 md:grid-rows-1 md:grid-cols-3 gap-y-4 md:gap-y-0 md:gap-x-4">
-            <Date
+            <DateInput
               name="startDate"
               value={animeData.aired.startDate}
               onChange={(e) =>
@@ -338,7 +391,7 @@ function animeCreator() {
               title="Airing started on"
             />
 
-            <Date
+            <DateInput
               name="endDate"
               value={animeData.aired.endDate}
               onChange={(e) =>
@@ -424,16 +477,15 @@ function animeCreator() {
 
           {/* related animes and country of origin div */}
 
-          <div className="grid grid-rows-2 md:grid-rows-1 md:grid-cols-2 gap-y-4 md:gap-y-0 md:gap-x-4 items-start md:items-center">
-            <DynamicInputList
-              setFunction={setRelatedAnimes}
-              DynamicInputs={relatedAnimes}
-              label="Related anime"
-            />
+          <RelatedAnimesInput
+            setFunction={setRelatedAnimes}
+            DynamicInputs={relatedAnimes}
+            label="Related anime"
+          />
 
-            <div className="px-3 md:px-0">
+          {/* <div className="px-3 md:px-0">
               <Select
-                name="season"
+                name="country"
                 options={{
                   Country: "",
                   Japan: "JAPAN",
@@ -446,13 +498,12 @@ function animeCreator() {
                   handleInputValueChanged(e.target.name, e.target.value)
                 }
               />
-            </div>
-          </div>
+            </div> */}
 
           {/* form actions div */}
           <div className="flex justify-end w-full pt-10">
             <button className="bg-[#007bff] hover:bg-[#1385ff] text-white w-full py-6 text-3xl font-bold rounded-full active:scale-95 transition-all ease-in-out outline-none">
-              Add Anime
+              {animeId ? "Update Anime" : "Add Anime"}
             </button>
           </div>
         </form>

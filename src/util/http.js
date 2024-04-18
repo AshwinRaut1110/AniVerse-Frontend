@@ -1,5 +1,52 @@
+import { authActions } from "../store/authSlice";
 import store from "../store/store";
 import { QueryClient } from "@tanstack/react-query";
+
+// create anime mutation
+export async function createAnime(formData) {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/v1/animes`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+      body: formData,
+    }
+  );
+
+  return await handleResponse(response);
+}
+
+// update anime mutation
+export async function updateAnime({ formData, animeId }) {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/v1/animes/${animeId}`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+      body: formData,
+    }
+  );
+
+  return await handleResponse(response);
+}
+
+export async function getAnimeDetailsForStudio(animeId, signal) {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/v1/animes/${animeId}`,
+    {
+      signal,
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    }
+  );
+
+  return await handleResponse(response);
+}
 
 const getAuthToken = () => {
   return store.getState().auth.token?.token;

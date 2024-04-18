@@ -1,8 +1,6 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
 
 function ErrorComponent({ className, errors, onHideError }) {
-
   return (
     <div
       className={`relative flex flex-col items-center bg-red-500 mb-5 p-3 rounded-md font-[Lato] ${
