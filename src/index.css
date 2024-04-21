@@ -56,6 +56,54 @@
   }
 }
 
+.rise-from-below-animation {
+  animation: rise-from-below 150ms ease-in-out;
+}
+
+@keyframes rise-from-below {
+  0% {
+    transform: translateY(30px);
+  }
+  25% {
+    transform: translateY(20px);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  75% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.move-in-from-right-animation {
+  animation: move-in-from-right 300ms ease-in-out;
+}
+
+@keyframes move-in-from-right {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.move-in-from-left-animation {
+  animation: move-in-from-left 300ms ease-in-out;
+}
+
+@keyframes move-in-from-left {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
 .input-container {
   display: flex;
   flex-direction: column;
@@ -119,7 +167,7 @@ textarea:focus {
 }
 
 body::-webkit-scrollbar {
-  width: 18px;
+  width: 20px;
 }
 
 body::-webkit-scrollbar-thumb {
@@ -127,11 +175,11 @@ body::-webkit-scrollbar-thumb {
   background-clip: content-box;
   /* background-color: hsl(0, 0%, 67%); */
   background-color: hsl(0, 0%, 65%);
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 body::-webkit-scrollbar-track {
-  background: var(--primary-color);
+  background: var(--secondary-color);
 }
 
 /* body::-webkit-scrollbar-button:single-button {
@@ -168,3 +216,29 @@ body::-webkit-scrollbar-button:single-button:vertical:increment:hover {
 body::-webkit-scrollbar-button:single-button:vertical:increment:active {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='rgb(128, 128, 128)'><polygon points='0,0 100,0 50,50'/></svg>");
 } */
+
+.banner-div {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(44, 44, 44, 0.5) 0,
+    rgba(44, 44, 44, 0.5) 100%
+  );
+}
+
+@media (min-width: 768px) {
+  .banner-div {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 5;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to right, #000c 0, #0009 30%, #0000 70%);
+  }
+}

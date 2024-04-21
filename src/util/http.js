@@ -34,9 +34,11 @@ export async function updateAnime({ formData, animeId }) {
   return await handleResponse(response);
 }
 
-export async function getAnimeDetailsForStudio(animeId, signal) {
+export async function getAnimeDetailsById(animeId, signal, populate) {
   const response = await fetch(
-    `${import.meta.env.VITE_API_URL}/api/v1/animes/${animeId}`,
+    `${import.meta.env.VITE_API_URL}/api/v1/animes/${animeId}${
+      populate ? "?populate=true" : ""
+    }`,
     {
       signal,
       headers: {

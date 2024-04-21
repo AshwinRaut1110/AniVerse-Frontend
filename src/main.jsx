@@ -10,6 +10,7 @@ import ProfilePage from "./pages/ProfilePage.jsx";
 import AddNewAnimePage from "./pages/addNewAnimePage.jsx";
 import EditAnimePage from "./pages/editAnimePage.jsx";
 import { queryClient } from "./util/http.js";
+import AnimePage from "./pages/AnimePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,15 @@ const router = createBrowserRouter([
           {
             path: ":animeId",
             element: <EditAnimePage />,
+          },
+        ],
+      },
+      {
+        path: "animes",
+        children: [
+          {
+            path: ":animeId",
+            element: <AnimePage />,
           },
         ],
       },

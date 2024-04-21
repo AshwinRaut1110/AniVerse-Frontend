@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import AnimeCreator from "../components/Anime/animeCreator";
+import AnimeCreator from "../components/Anime/AnimeCreator";
 import { useParams } from "react-router-dom";
-import { getAnimeDetailsForStudio } from "../util/http";
+import { getAnimeDetailsById } from "../util/http";
 
 function editAnimePage() {
   // fetch the anime details
@@ -9,8 +9,8 @@ function editAnimePage() {
   const { animeId } = useParams();
 
   const { data, isError, error, isPending } = useQuery({
-    queryKey: ["anime", animeId],
-    queryFn: ({ signal }) => getAnimeDetailsForStudio(animeId, signal),
+    queryKey: ["animes", animeId],
+    queryFn: ({ signal }) => getAnimeDetailsById(animeId, signal),
   });
 
   console.log(data);

@@ -1,4 +1,4 @@
-import AnimeCreator from "../components/Anime/animeCreator";
+import AnimeCreator from "../components/Anime/AnimeCreator";
 
 function addNewAnimePage() {
   return (

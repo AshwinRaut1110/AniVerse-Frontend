@@ -11,7 +11,7 @@ function SuccessNotification({ title, message }) {
   };
 
   return (
-    <div className="flex items-center justify-center sticky bottom-14 w-full font-[Lato]">
+    <div className="flex items-center justify-center sticky bottom-14 w-full font-[Lato] rise-from-below-animation">
       <div className="z-20 relative flex items-center h-28 rounded-md w-full sm:w-[80%] md:w-[50%] lg:w-[40%] bg-secondary-color pl-10">
         <div className="absolute left-0 top-0 h-28 w-3 bg-green-500 rounded-tl-md rounded-bl-md"></div>
         <div className="bg-green-500 p-3 rounded-full">

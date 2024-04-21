@@ -5,7 +5,7 @@ import Select from "../UI/Select";
 import { GENRES } from "../../util/constants";
 import DynamicInputList from "../UI/DynamicInputList";
 import { useMutation } from "@tanstack/react-query";
-import { createAnime, updateAnime } from "../../util/http";
+import { createAnime, queryClient, updateAnime } from "../../util/http";
 import ErrorComponent from "../UI/ErrorComponent";
 import DateInput from "../UI/Date";
 import { useParams } from "react-router-dom";
@@ -13,6 +13,7 @@ import RelatedAnimesInput from "../UI/RelatedAnimesInput";
 import { useDispatch } from "react-redux";
 import { notificationActions } from "../../store/NotificationSlice";
 
+// default initialState for createNewAnime page
 const initialState = {
   names: {
     english: "",
@@ -38,10 +39,10 @@ const initialState = {
   relatedAnimes: [""],
 };
 
-function animeCreator({ existingAnimeData }) {
+function AnimeCreator({ existingAnimeData }) {
   const { animeId } = useParams();
 
-  // States
+  // anime data states
   const [animeData, setAnimeData] = useState(existingAnimeData || initialState);
   const [genres, setGenres] = useState(
     existingAnimeData?.genres || initialState.genres
@@ -56,14 +57,17 @@ function animeCreator({ existingAnimeData }) {
     existingAnimeData?.description || initialState.description
   );
   const [relatedAnimes, setRelatedAnimes] = useState(
-    existingAnimeData?.relatedAnimes || initialState.relatedAnimes || [""]
+    existingAnimeData?.relatedAnimes ||
+      initialState.relatedAnimes || [{ anime: "", relation: "" }]
   );
 
   const [showError, setShowError] = useState(false);
 
+  // anime banner states
   const [banner, setBanner] = useState();
   const [bannerPreview, setBannerPreview] = useState("");
 
+  // anime thumbnail states
   const [thumbnail, setThumbnail] = useState();
   const [thumbnailPreview, setThumbnailPreview] = useState("");
 
@@ -74,6 +78,12 @@ function animeCreator({ existingAnimeData }) {
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: animeId ? updateAnime : createAnime,
     onSuccess: function (data) {
+      setAnimeData(data.data.anime);
+
+      queryClient.invalidateQueries({
+        queryKey: ["animes", data.data.anime._id],
+      });
+
       dispatch(
         notificationActions.showSuccessNotification({
           title: "Success",
@@ -512,4 +522,4 @@ function animeCreator({ existingAnimeData }) {
   );
 }
 
-export default animeCreator;
+export default AnimeCreator;
