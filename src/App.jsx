@@ -26,17 +26,17 @@ function App() {
 
   return (
     <div className="bg-primary-color min-h-screen relative">
-      <MainNavigation />
-      <Outlet />
-      <Modal isOpen={modalIsShown} onClose={handleHideModal}>
-        <AuthModal />
-      </Modal>
       {successNotification.show && (
         <SuccessNotification
           title={successNotification.title}
           message={successNotification.message}
         />
       )}
+      <MainNavigation />
+      <Outlet />
+      <Modal isOpen={modalIsShown} onClose={handleHideModal}>
+        <AuthModal />
+      </Modal>
     </div>
   );
 }

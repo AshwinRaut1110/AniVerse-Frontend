@@ -7,6 +7,8 @@
 :root {
   --primary-color: #121212;
   --secondary-color: #212121;
+  --blue-base: #007bff;
+  --blue-darker: #1385ff;
 }
 
 .text-gradient-animation {
@@ -151,6 +153,10 @@ textarea:focus {
   box-shadow: 0 0 0 2px #79b1ff;
 }
 
+.input-container textarea {
+  padding-top: 20px;
+}
+
 .select::after {
   display: flex;
   align-items: center;
@@ -241,4 +247,25 @@ body::-webkit-scrollbar-button:single-button:vertical:increment:active {
     width: 100%;
     background: linear-gradient(to right, #000c 0, #0009 30%, #0000 70%);
   }
+}
+
+#spoilercheckbox path {
+  stroke-linecap: round;
+  stroke-dasharray: 180;
+}
+
+.ischecked {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.3s cubic-bezier(0.5, 0, 0.25, 1);
+  stroke: #2abdbb;
+}
+
+.content{
+  transition: height ease 0.5s;
+  height: 0px;
+  overflow: hidden;
+}
+
+.content.show{
+  height: auto;
 }

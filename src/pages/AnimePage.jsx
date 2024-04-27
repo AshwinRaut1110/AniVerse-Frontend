@@ -9,8 +9,6 @@ import ReviewEditor from "../components/Reviews/ReviewEditor";
 function AnimePage() {
   const { animeId } = useParams();
 
-  console.log(animeId);
-
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["animes", animeId],
     queryFn: ({ singal }) => getAnimeDetailsById(animeId, singal, true),
@@ -18,15 +16,11 @@ function AnimePage() {
     gcTime: 60000,
   });
 
-  console.log(data);
-
   if (isLoading) return <></>;
 
   const { anime } = data.data;
 
   const averageRating = anime.averageRating.toFixed(1);
-
-  console.log(anime.relatedAnimes);
 
   return (
     <div className="h-full w-full pb-10">

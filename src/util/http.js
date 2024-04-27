@@ -72,4 +72,39 @@ const handleResponse = async (response) => {
   return await response.json();
 };
 
+export async function getUserReview(animeId, signal) {
+  const response = await fetch(
+    `${
+      import.meta.env.VITE_API_URL
+    }/api/v1/animes/${animeId}/reviews/my-review`,
+    {
+      signal,
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+    }
+  );
+
+  return await handleResponse(response);
+}
+
+export async function updateAReview({ review, animeId, reviewIsNew }) {
+  let url = `${import.meta.env.VITE_API_URL}/api/v1/animes/${animeId}/reviews`;
+
+  if (!reviewIsNew) url += "/my-review";
+
+  const method = reviewIsNew ? "POST" : "PATCH";
+
+  const response = await fetch(url, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+    body: JSON.stringify(review),
+  });
+
+  return await handleResponse(response);
+}
+
 export const queryClient = new QueryClient();

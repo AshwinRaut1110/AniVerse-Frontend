@@ -36,7 +36,7 @@ function MainNavigation() {
   // useEffect(() => {}, [showDropdown]);
 
   return (
-    <header className="flex justify-between items-center bg-secondary-color px-5 py-[0.8rem]">
+    <header className="flex justify-between items-center sticky top-0 z-[25] bg-secondary-color px-5 py-[0.8rem]">
       <Link to="/">
         <h1
           // className="text-5xl font-bold text-gradient-animation select-none"

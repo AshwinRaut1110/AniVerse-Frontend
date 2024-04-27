@@ -34,3 +34,23 @@ export function applyWordLimit(text, wordLimit) {
 export function applyCharacterLimit(text, charLimit) {
   return text.substring(0, charLimit) + (text.length > charLimit ? "..." : "");
 }
+
+export function getScreenDimensions() {
+  const screenWidth = window.innerWidth;
+
+  if (screenWidth < 640) {
+    return "xs";
+  } else if (screenWidth >= 640 && screenWidth < 768) {
+    return "sm";
+  } else if (screenWidth >= 768 && screenWidth < 1024) {
+    return "md";
+  } else if (screenWidth >= 1024) {
+    return "lg";
+  } else {
+    return "xl";
+  }
+}
+
+export function hasMinLength(s, minLength){
+  return s.trim().length >= minLength;
+}

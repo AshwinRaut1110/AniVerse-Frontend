@@ -1,18 +1,8 @@
-import { useState } from "react";
 import { capitalize, formatAiredDate } from "../../util/misc";
 import { Rating } from "react-simple-star-rating";
+import CollapsableContent from "../UI/DisplayText/CollapsableContent";
 
 function AnimeDetailsSection({ anime, averageRating }) {
-  const [showFullDescription, setShowFullDescription] = useState(false);
-
-  const handleToggleShowDescription = () => {
-    setShowFullDescription((prevValue) => !prevValue);
-  };
-
-  const descriptionParagraphs = anime.description
-    .split("\n")
-    .filter((para) => para.trim() !== "");
-
   let aired;
 
   if (anime.status === "not yet aired") {
@@ -42,26 +32,11 @@ function AnimeDetailsSection({ anime, averageRating }) {
       </div>
 
       {/* description */}
-      <div className="mt-3 w-[100%] md:w-[90%] text-[0.5rem] sm:text-xs md:text-sm lg:text-base">
-        <div
-          className={`w-full ${
-            showFullDescription ? "" : "line-clamp-6"
-          } space-y-2`}
-        >
-          {descriptionParagraphs.map((paragraph, index) => (
-            <p key={index} className="text-gray-400">
-              {paragraph}
-            </p>
-          ))}
-        </div>
-
-        <button
-          className="text-gray-400 hover:text-gray-100"
-          onClick={handleToggleShowDescription}
-        >
-          {showFullDescription ? "less" : "more"}
-        </button>
-      </div>
+      <CollapsableContent
+        content={anime.description}
+        contentColor="text-gray-400"
+        shadowColor="bg-[rgb(18,18,18,0.5)]"
+      />
 
       <div className="flex items-center mt-1 md:mt-4 space-x-0 md:space-x-3">
         <Rating
@@ -75,9 +50,7 @@ function AnimeDetailsSection({ anime, averageRating }) {
 
         <div className="flex items-center text-[0.5rem] sm:text-xs md:text-sm lg:text-lg text-gray-400">
           <span>Average Rating:</span>
-          <span className="text-[#ffbc0b] ml-2 mr-1">
-            {averageRating}
-          </span>
+          <span className="text-[#ffbc0b] ml-2 mr-1">{averageRating}</span>
           <span>({anime.ratingsQuantity} reviews)</span>
         </div>
       </div>
