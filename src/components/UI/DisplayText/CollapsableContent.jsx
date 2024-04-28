@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getScreenDimensions } from "../../../util/misc";
 
-function CollapsableContent({ content, contentColor, shadowColor }) {
+function CollapsableContent({
+  content,
+  contentColor,
+  textSize,
+  smallScreenContentHeight,
+  largeScreenContentHeight,
+}) {
   // states
   const [showFullContent, setShowFullContent] = useState(false);
 
@@ -12,15 +18,10 @@ function CollapsableContent({ content, contentColor, shadowColor }) {
 
   // calculate the default content div height
   let defaultContentHeight = ["xs", "sm"].includes(getScreenDimensions())
-    ? "90px"
-    : "144px";
+    ? smallScreenContentHeight || "90px"
+    : largeScreenContentHeight || "144px";
 
   if (!contentIsOverflowing) defaultContentHeight = "50px";
-
-  // calculate the default shadow height
-  const defaultShadowHeight = ["xs", "sm"].includes(getScreenDimensions())
-    ? "10px"
-    : "25px";
 
   const handleToggleShowContent = () => {
     setShowFullContent((prevValue) => !prevValue);
@@ -37,9 +38,16 @@ function CollapsableContent({ content, contentColor, shadowColor }) {
   }, []);
 
   return (
-    <div className="mt-3 w-[100%] md:w-[90%] text-[0.5rem] sm:text-xs md:text-sm lg:text-base">
+    <div
+      className={`mt-3 w-[100%] md:w-[90%] ${
+        textSize || "text-[0.5rem] sm:text-xs md:text-sm lg:text-base"
+      }`}
+    >
       <div
-        className={`relative w-full trasnition-[height] duration-500 ease-in-out overflow-hidden space-y-2`}
+        className={
+          `relative w-full trasnition-[height] duration-500 ease-in-out overflow-hidden space-y-2 ` +
+          (!showFullContent && contentIsOverflowing ? "mask-content" : "")
+        }
         ref={contentDivRef}
         style={{
           height: showFullContent
@@ -52,11 +60,6 @@ function CollapsableContent({ content, contentColor, shadowColor }) {
             {paragraph}
           </p>
         ))}
-        {!showFullContent && contentIsOverflowing && (
-          <div
-            className={`absolute bottom-0 h-[${defaultShadowHeight}] ${shadowColor} w-full`}
-          />
-        )}
       </div>
 
       {contentIsOverflowing && (

@@ -51,6 +51,23 @@ export function getScreenDimensions() {
   }
 }
 
-export function hasMinLength(s, minLength){
+export function hasMinLength(s, minLength) {
   return s.trim().length >= minLength;
+}
+
+const titles = [
+  "Appalling",
+  "Horrible",
+  "Very Bad",
+  "Bad",
+  "Average",
+  "Fine",
+  "Good",
+  "Very Good",
+  "Great",
+  "Masterpiece",
+];
+
+export function getTitleFromRating(rating) {
+  return titles[Number.parseInt(rating * 2) - 1];
 }

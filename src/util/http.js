@@ -107,4 +107,38 @@ export async function updateAReview({ review, animeId, reviewIsNew }) {
   return await handleResponse(response);
 }
 
+export const REVIEWPAGELIMIT = 10;
+
+export async function getAllReviewsForAnAnime(
+  animeId,
+  reviewPageNumber,
+  signal
+) {
+  const response = await fetch(
+    `${
+      import.meta.env.VITE_API_URL
+    }/api/v1/animes/${animeId}/reviews?page=${reviewPageNumber}&limit=${REVIEWPAGELIMIT}`,
+    {
+      signal,
+    }
+  );
+
+  return await handleResponse(response);
+}
+
+export async function addReviewVote({ animeId, reviewId, type }) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/animes/${animeId}/reviews/${reviewId}/${type}`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+  });
+
+  return await handleResponse(response);
+}
+
 export const queryClient = new QueryClient();

@@ -11,6 +11,7 @@ import ErrorComponent from "../UI/ErrorComponent";
 import NyanLoader from "../UI/NyanLoader";
 import { authModalActions } from "../../store/authModalSlice";
 import { notificationActions } from "../../store/NotificationSlice";
+import defaultProfile from "../../assets/defaultProfile.jpg";
 
 function ReviewEditor() {
   const { animeId } = useParams();
@@ -65,7 +66,7 @@ function ReviewEditor() {
       mutationFn: updateAReview,
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: ["reviews", animeId, username],
+          queryKey: ["reviews", animeId],
         });
 
         setShowAddReviewSection(false);
@@ -209,7 +210,7 @@ function ReviewEditor() {
           {/* head and rating section */}
           <div className="flex space-x-5">
             <img
-              src={profilePicture}
+              src={profilePicture || defaultProfile}
               alt={username}
               className="w-16 md:w-28 rounded-full"
             />

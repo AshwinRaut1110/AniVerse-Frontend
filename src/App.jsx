@@ -5,7 +5,8 @@ import MainNavigation from "./components/MainNavigation";
 import Modal from "./components/UI/Modal";
 import AuthModal from "./components/Auth/AuthModal";
 import { authModalActions } from "./store/authModalSlice";
-import SuccessNotification from "./components/UI/SuccessNotification";
+import SuccessNotification from "./components/UI/Notifications/SuccessNotification";
+import ErrorNotification from "./components/UI/Notifications/ErrorNotification";
 
 function App() {
   // initialize the history object so navigate and location can be used outside components
@@ -19,6 +20,8 @@ function App() {
     (state) => state.notification.success
   );
 
+  const errorNotification = useSelector((state) => state.notification.error);
+
   // hides the login modal
   const handleHideModal = () => {
     dispatch(authModalActions.hideModal());
@@ -27,11 +30,13 @@ function App() {
   return (
     <div className="bg-primary-color min-h-screen relative">
       {successNotification.show && (
-        <SuccessNotification
-          title={successNotification.title}
-          message={successNotification.message}
-        />
+        <SuccessNotification message={successNotification.message} />
       )}
+
+      {errorNotification.show && (
+        <ErrorNotification message={errorNotification.message} />
+      )}
+      
       <MainNavigation />
       <Outlet />
       <Modal isOpen={modalIsShown} onClose={handleHideModal}>

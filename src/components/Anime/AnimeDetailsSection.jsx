@@ -103,6 +103,11 @@ function AnimeDetailsSection({ anime, averageRating }) {
         </p>
 
         <p>
+          <span className="text-gray-400">Duration: </span>
+          <span className="text-gray-100">{anime.duration} mins per ep</span>
+        </p>
+
+        <p>
           <span className="text-gray-400">Genres: </span>
           <span className="text-gray-100">{anime.genres.join(", ")}</span>
         </p>

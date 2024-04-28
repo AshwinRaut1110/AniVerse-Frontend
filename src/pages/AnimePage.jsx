@@ -4,7 +4,7 @@ import { getAnimeDetailsById } from "../util/http";
 import { applyWordLimit, capitalize } from "../util/misc";
 import AnimeDetailsSection from "../components/Anime/AnimeDetailsSection";
 import AnimeGrid from "../components/UI/AnimeGrid";
-import ReviewEditor from "../components/Reviews/ReviewEditor";
+import Reviews from "../components/Reviews/Reviews";
 
 function AnimePage() {
   const { animeId } = useParams();
@@ -85,16 +85,7 @@ function AnimePage() {
       </div>
 
       {/* reviews section */}
-      <div className="flex flex-col space-y-5 w-full px-3 sm:px7 md:px-14 py-7">
-        <div>
-          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-4xl font-[Lato] font-bold text-[#007bff]">
-            Reviews
-          </h3>
-        </div>
-
-        {/* review editor */}
-        <ReviewEditor />
-      </div>
+      <Reviews averageRating={anime.averageRating} ratingsQuantity={anime.ratingsQuantity} />
     </div>
   );
 }

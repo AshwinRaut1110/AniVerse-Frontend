@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { UserIcon } from "@heroicons/react/24/outline";
 import { authModalActions } from "../store/authModalSlice";
@@ -12,7 +12,8 @@ function MainNavigation() {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef();
 
-  const handleToggleDropdown = () => {
+  const handleToggleDropdown = (e) => {
+    e.stopPropagation();
     setShowDropdown((prevValue) => !prevValue);
   };
 
@@ -32,8 +33,23 @@ function MainNavigation() {
     dispatch(authActions.logout());
   };
 
+  const handleClickedOutside = useCallback(() => {
+    setShowDropdown(false);
+  }, [setShowDropdown]);
+
   // for handling closing the dropdown on mouse clicked outside
-  // useEffect(() => {}, [showDropdown]);
+  useEffect(() => {
+    if (showDropdown) {
+      // adding click listener on the window object to close the dropdown when the use clicks outside
+      window.addEventListener("click", handleClickedOutside);
+    } else {
+      window.removeEventListener("click", handleClickedOutside);
+    }
+
+    () => {
+      window.removeEventListener("click", handleClickedOutside);
+    };
+  }, [showDropdown]);
 
   return (
     <header className="flex justify-between items-center sticky top-0 z-[25] bg-secondary-color px-5 py-[0.8rem]">

@@ -260,12 +260,21 @@ body::-webkit-scrollbar-button:single-button:vertical:increment:active {
   stroke: #2abdbb;
 }
 
-.content{
+.content {
   transition: height ease 0.5s;
   height: 0px;
   overflow: hidden;
 }
 
-.content.show{
+.content.show {
   height: auto;
+}
+
+.mask-content {
+  --fade-size: 2rem;
+  mask-image: linear-gradient(
+    to bottom,
+    #000 calc(100% - var(--fade-size)),
+    #0000
+  );
 }
