@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { Fragment } from "react";
 import ReviewEditor from "./ReviewEditor";
 import { useEffect, useState } from "react";
 import { REVIEWPAGELIMIT, getAllReviewsForAnAnime } from "../../util/http";
@@ -11,56 +12,32 @@ import {
   AdjustmentsHorizontalIcon,
   Bars3BottomLeftIcon,
 } from "@heroicons/react/24/outline";
+import ErrorComponent from "../UI/ErrorComponent";
 
 function Reviews({ averageRating, ratingsQuantity }) {
   const { animeId } = useParams();
 
-  const [reviews, setReviews] = useState([]);
-
-  const [reviewPageNumber, setPageNumber] = useState(1);
-
-  const [showMoreReviewsButton, setShowMoreReviewsButton] = useState(true);
-
   const {
-    data: fetchedReviews,
-    isPending,
+    data,
+    isFetching,
     isError,
     error,
-  } = useQuery({
-    queryKey: ["animes", animeId, "reviews", reviewPageNumber],
-    queryFn: ({ signal }) =>
-      getAllReviewsForAnAnime(animeId, reviewPageNumber, signal),
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["animes", animeId, "reviews"],
+    queryFn: ({ pageParam, signal }) =>
+      getAllReviewsForAnAnime(animeId, pageParam, signal),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.results === 0 ? null : pages.length + 1;
+    },
   });
-
-  // cleanup function to prevent duplicate reviews when switching from another page back to this page
-  useEffect(() => {
-    return () => {
-      setReviews([]);
-      setPageNumber(1);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (
-      !fetchedReviews ||
-      !fetchedReviews?.data ||
-      !fetchedReviews?.data?.reviews
-    )
-      return;
-
-    if (
-      fetchedReviews.data.reviews.length < REVIEWPAGELIMIT ||
-      fetchedReviews.data.reviews.length === 0
-    ) {
-      setShowMoreReviewsButton(false);
-    }
-
-    setReviews((prevValue) => [...prevValue, ...fetchedReviews.data.reviews]);
-  }, [fetchedReviews]);
 
   let content;
 
-  if (reviews.length === 0 && isPending) {
+  if (isFetching && !isFetchingNextPage && !isError) {
     content = (
       <div
         className="flex flex-col items-center justify-center
@@ -69,11 +46,7 @@ w-full md:w-[80%] mx-auto bg-primary-color p-4 font-[Lato]"
         <NyanLoader className="h-16" />
       </div>
     );
-  } else if (
-    reviews.length === 0 &&
-    !isPending &&
-    fetchedReviews?.data?.reviews?.length === 0
-  ) {
+  } else if (!isFetching && !data?.pages?.length && !isError) {
     content = (
       <div
         className="flex flex-col items-center justify-center
@@ -89,11 +62,15 @@ w-full md:w-[80%] mx-auto bg-primary-color p-4 font-[Lato]"
         </div>
       </div>
     );
-  } else {
+  } else if (!isError) {
     content = (
       <div className="w-full md:w-[80%] mx-auto bg-primary-color p-4 space-y-3 md:space-y-7">
-        {reviews.map((review) => (
-          <ReviewItem key={review._id} review={review} />
+        {data.pages.map((page, index) => (
+          <Fragment key={index}>
+            {page.data.reviews.map((review) => (
+              <ReviewItem key={review._id} review={review} />
+            ))}
+          </Fragment>
         ))}
       </div>
     );
@@ -133,7 +110,37 @@ w-full md:w-[80%] mx-auto bg-primary-color p-4 font-[Lato]"
       {/* review editor */}
       <ReviewEditor />
 
+      {isError && (
+        <div className="w-full md:w-[80%] mx-auto bg-primary-color p-4">
+          <ErrorComponent
+            errors={error.info?.message || "Some error occured."}
+          />
+        </div>
+      )}
+
       {content}
+
+      {/* load more button */}
+      <div className="flex items-center justify-center w-full md:w-[80%] mx-auto bg-primary-color pt-3">
+        {!isError && hasNextPage && !isFetching && !isFetchingNextPage && (
+          <button
+            className="bg-[#007bff] hover:bg-[#1385ff] text-white px-3 md:px-5 lg:px-7 py-3 md:py-4 text-[0.9rem] md:text-base font-bold rounded-lg active:scale-95 transition-all ease-in-out outline-none"
+            onClick={fetchNextPage}
+          >
+            LOAD MORE
+          </button>
+        )}
+
+        {!isError && isFetching && isFetchingNextPage && (
+          <NyanLoader className="h-12" />
+        )}
+
+        {!isError && !isFetching && !isFetchingNextPage && !hasNextPage && (
+          <p className="text-gray-300 text-sm md:text-base text-center">
+            It looks like you have read through all the reviews 🙃
+          </p>
+        )}
+      </div>
     </div>
   );
 }

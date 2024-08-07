@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Rating } from "react-simple-star-rating";
-import Input from "../UI/Input";
-import TextareaInput from "../UI/TextareaInput";
+import Input from "../UI/Inputs/Input";
+import TextareaInput from "../UI/Inputs/TextareaInput";
 import { getScreenDimensions, hasMinLength } from "../../util/misc";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getUserReview, queryClient, updateAReview } from "../../util/http";

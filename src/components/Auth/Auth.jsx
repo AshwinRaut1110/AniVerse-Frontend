@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import senko from "../../assets/login.png";
-import Input from "../UI/Input";
+import Input from "../UI/Inputs/Input";
 import { useDispatch, useSelector } from "react-redux";
 import { authModalActions } from "../../store/authModalSlice";
 import { authActions } from "../../store/authSlice";

@@ -5,6 +5,7 @@ import { applyWordLimit, capitalize } from "../util/misc";
 import AnimeDetailsSection from "../components/Anime/AnimeDetailsSection";
 import AnimeGrid from "../components/UI/AnimeGrid";
 import Reviews from "../components/Reviews/Reviews";
+import AnimeCarousel from "../components/UI/AnimeCarousel";
 
 function AnimePage() {
   const { animeId } = useParams();
@@ -81,11 +82,15 @@ function AnimePage() {
           More Seasons
         </h3>
 
-        <AnimeGrid animes={anime.relatedAnimes} mode="seasons" />
+        {/* <AnimeGrid animes={anime.relatedAnimes} mode="seasons" /> */}
+        <AnimeCarousel animes={anime.relatedAnimes} />
       </div>
 
       {/* reviews section */}
-      <Reviews averageRating={anime.averageRating} ratingsQuantity={anime.ratingsQuantity} />
+      <Reviews
+        averageRating={anime.averageRating}
+        ratingsQuantity={anime.ratingsQuantity}
+      />
     </div>
   );
 }

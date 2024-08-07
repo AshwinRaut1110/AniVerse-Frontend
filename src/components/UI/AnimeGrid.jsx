@@ -1,4 +1,4 @@
-import AnimeCardSmall from "../Anime/AnimeCardSmall";
+import AnimeCardSmall from "../Anime/AnimeCard";
 
 function AnimeGrid({ animes, mode }) {
   if (mode === "seasons") {

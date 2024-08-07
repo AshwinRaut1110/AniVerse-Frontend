@@ -107,7 +107,7 @@ export async function updateAReview({ review, animeId, reviewIsNew }) {
   return await handleResponse(response);
 }
 
-export const REVIEWPAGELIMIT = 10;
+export const REVIEWPAGELIMIT = 2;
 
 export async function getAllReviewsForAnAnime(
   animeId,

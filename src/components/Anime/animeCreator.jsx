@@ -1,15 +1,15 @@
 import { PencilIcon } from "@heroicons/react/24/outline";
-import Input from "../UI/Input";
+import Input from "../UI/Inputs/Input";
 import { useState } from "react";
-import Select from "../UI/Select";
+import Select from "../UI/Inputs/Select";
 import { GENRES } from "../../util/constants";
-import DynamicInputList from "../UI/DynamicInputList";
+import DynamicInputList from "../UI/Inputs/DynamicInputList";
 import { useMutation } from "@tanstack/react-query";
 import { createAnime, queryClient, updateAnime } from "../../util/http";
 import ErrorComponent from "../UI/ErrorComponent";
-import DateInput from "../UI/Date";
+import DateInput from "../UI/Inputs/Date";
 import { useParams } from "react-router-dom";
-import RelatedAnimesInput from "../UI/RelatedAnimesInput";
+import RelatedAnimesInput from "../UI/Inputs/RelatedAnimesInput";
 import { useDispatch } from "react-redux";
 import { notificationActions } from "../../store/NotificationSlice";
 
