@@ -13,8 +13,6 @@ function editAnimePage() {
     queryFn: ({ signal }) => getAnimeDetailsById(animeId, signal),
   });
 
-  console.log(data);
-
   return (
     <div className="p-5 pt-7">
       <h1 className="text-center text-3xl sm:text-5xl font-bold font-[Lato]">

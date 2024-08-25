@@ -1,5 +1,4 @@
 import nyanLoader from "../../assets/nyan-loader.gif";
-// import nyanLoader from "../../assets/nyancat.svg";
 
 function NyanLoader({ className }) {
   return (

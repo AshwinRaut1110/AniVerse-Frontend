@@ -11,6 +11,8 @@ import AddNewAnimePage from "./pages/addNewAnimePage.jsx";
 import EditAnimePage from "./pages/editAnimePage.jsx";
 import { queryClient } from "./util/http.js";
 import AnimePage from "./pages/AnimePage.jsx";
+import AddNewEpisodePage from "./pages/AddNewEpisodePage.jsx";
+import EditEpisodePage from "./pages/EditEpisodePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +29,20 @@ const router = createBrowserRouter([
           },
           {
             path: ":animeId",
-            element: <EditAnimePage />,
+            children: [
+              {
+                path: "",
+                element: <EditAnimePage />,
+              },
+              {
+                path: "episodes",
+                element: <AddNewEpisodePage />,
+              },
+              {
+                path: "episodes/:episodeIdentifier",
+                element: <EditEpisodePage />,
+              },
+            ],
           },
         ],
       },

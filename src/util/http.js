@@ -55,7 +55,7 @@ const getAuthToken = () => {
 };
 
 // common response handler function
-const handleResponse = async (response) => {
+const handleResponse = async (response, wasDeleteRequest) => {
   if (!response.ok) {
     // check for 401 and 403 status codes, and if the user is logged in if yes the user should be logged out
     if ([401, 403].includes(response.status) && getAuthToken()) {
@@ -69,7 +69,7 @@ const handleResponse = async (response) => {
     throw error;
   }
 
-  return await response.json();
+  return wasDeleteRequest ? null : await response.json();
 };
 
 export async function getUserReview(animeId, signal) {
@@ -139,6 +139,95 @@ export async function addReviewVote({ animeId, reviewId, type }) {
   });
 
   return await handleResponse(response);
+}
+
+export async function addEpisode(episodeData) {
+  const url = `${import.meta.env.VITE_API_URL}/api/v1/animes/${
+    episodeData.anime
+  }/episodes`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+    body: JSON.stringify(episodeData),
+  });
+
+  return await handleResponse(response);
+}
+
+export async function updateEpisode(episodeData) {
+
+  console.log(episodeData._id);
+
+  const url = `${import.meta.env.VITE_API_URL}/api/v1/animes/${
+    episodeData.anime
+  }/episodes/${episodeData._id}`;
+
+  const response = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+    body: JSON.stringify(episodeData),
+  });
+
+  return await handleResponse(response);
+}
+
+export async function getEpisodeData(episodeIdentifier, animeId, signal) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/animes/${animeId}/episodes/${episodeIdentifier}`;
+
+  const response = await fetch(url, { signal });
+
+  return await handleResponse(response);
+}
+
+export async function uploadEpisodeVariant({
+  episodeIdentifier,
+  animeId,
+  variantData,
+  variant,
+}) {
+  console.log(variant);
+
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/animes/${animeId}/episodes/upload/${episodeIdentifier}?variant=${variant}`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+    body: variantData,
+  });
+
+  return await handleResponse(response);
+}
+
+export async function deleteEpisodeVariant({
+  episodeIdentifier,
+  animeId,
+  variant,
+}) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/animes/${animeId}/episodes/delete/${episodeIdentifier}?quality=${variant}`;
+
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+  });
+
+  return await handleResponse(response, true);
 }
 
 export const queryClient = new QueryClient();
