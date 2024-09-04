@@ -2,6 +2,13 @@ import { authActions } from "../store/authSlice";
 import store from "../store/store";
 import { QueryClient } from "@tanstack/react-query";
 
+// get multiple animes
+export async function getAnimes(url, signal) {
+  const response = await fetch(url, { signal });
+
+  return await handleResponse(response);
+}
+
 // create anime mutation
 export async function createAnime(formData) {
   const response = await fetch(
@@ -159,7 +166,6 @@ export async function addEpisode(episodeData) {
 }
 
 export async function updateEpisode(episodeData) {
-
   console.log(episodeData._id);
 
   const url = `${import.meta.env.VITE_API_URL}/api/v1/animes/${
@@ -182,6 +188,16 @@ export async function getEpisodeData(episodeIdentifier, animeId, signal) {
   const url = `${
     import.meta.env.VITE_API_URL
   }/api/v1/animes/${animeId}/episodes/${episodeIdentifier}`;
+
+  const response = await fetch(url, { signal });
+
+  return await handleResponse(response);
+}
+
+export async function getEpisodesForAnAnime({ animeId, page, limit, signal }) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/animes/${animeId}/episodes?page=${page}&limit=${limit}&sort=episodeNumber`;
 
   const response = await fetch(url, { signal });
 
@@ -228,6 +244,103 @@ export async function deleteEpisodeVariant({
   });
 
   return await handleResponse(response, true);
+}
+
+export async function getComments({
+  episodeId,
+  signal,
+  sort,
+  pageParam,
+  limit,
+}) {
+  let url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/episodes/${episodeId}/comments?page=${pageParam}&limit=${limit}`;
+
+  if (sort) url += `&sort=${sort}`;
+
+  const response = await fetch(url, { signal });
+
+  return await handleResponse(response);
+}
+
+export async function createAComment({ comment, episodeId }) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/episodes/${episodeId}/comments`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `bearer ${getAuthToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ comment }),
+  });
+
+  return await handleResponse(response);
+}
+
+export async function updateAComment({ comment, episodeId, commentId }) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/episodes/${episodeId}/comments/${commentId}`;
+
+  const response = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      Authorization: `bearer ${getAuthToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ comment }),
+  });
+
+  return await handleResponse(response);
+}
+
+export async function likeAComment({ commentId, episodeId }) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/episodes/${episodeId}/comments/${commentId}/like`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+  });
+
+  return await handleResponse(response);
+}
+
+export async function dislikeAComment({ commentId, episodeId }) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/episodes/${episodeId}/comments/${commentId}/dislike`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+  });
+
+  return await handleResponse(response);
+}
+
+export async function findUserLike({ signal, commentId, episodeId }) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/episodes/${episodeId}/comments/${commentId}/getlike`;
+
+  const response = await fetch(url, {
+    signal,
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+  });
+
+  return await handleResponse(response);
 }
 
 export const queryClient = new QueryClient();

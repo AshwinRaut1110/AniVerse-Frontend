@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-function Dropdown({ options, defaultIndex, title, useTitle, DropdownIcon }) {
+function DropdownOne({ options, defaultIndex, title, useTitle, DropdownIcon }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const dropdownHeaderButtonRef = useRef();
@@ -89,4 +89,4 @@ function Dropdown({ options, defaultIndex, title, useTitle, DropdownIcon }) {
   );
 }
 
-export default Dropdown;
+export default DropdownOne;

@@ -6,34 +6,17 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import AnimeCard from "../Anime/AnimeCard";
 
-function AnimeCarousel({ animes }) {
+function AnimeCarousel({ animes, breakpoints, keepMinHeight }) {
   return (
     <Swiper
-      breakpoints={{
-        0: {
-          slidesPerView: 1,
-          spaceBetween: 10,
-        },
-        640: {
-          slidesPerView: 2,
-          spaceBetween: 20,
-        },
-        768: {
-          slidesPerView: 4,
-          spaceBetween: 30,
-        },
-        1024: {
-          slidesPerView: 5,
-          spaceBetween: 30,
-        },
-      }}
+      breakpoints={breakpoints}
       loop={true}
       pagination={{
         clickable: true,
       }}
       navigation={true}
       modules={[Pagination, Navigation]}
-      className="w-full mx-auto min-h-[450px]"
+      className={`w-full mx-auto ${keepMinHeight ? "md:min-h-[450px]" : ""}`}
     >
       {animes.map(({ anime, relation }) => (
         <SwiperSlide key={anime._id}>

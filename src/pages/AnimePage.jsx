@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { getAnimeDetailsById } from "../util/http";
 import { applyWordLimit, capitalize } from "../util/misc";
 import AnimeDetailsSection from "../components/Anime/AnimeDetailsSection";
-import AnimeGrid from "../components/UI/AnimeGrid";
 import Reviews from "../components/Reviews/Reviews";
 import AnimeCarousel from "../components/UI/AnimeCarousel";
 
@@ -82,8 +81,24 @@ function AnimePage() {
           More Seasons
         </h3>
 
-        {/* <AnimeGrid animes={anime.relatedAnimes} mode="seasons" /> */}
-        <AnimeCarousel animes={anime.relatedAnimes} />
+        <AnimeCarousel
+          animes={anime.relatedAnimes}
+          keepMinHeight
+          breakpoints={{
+            0: {
+              slidesPerView: 3,
+              spaceBetween: 10,
+            },
+            768: {
+              slidesPerView: 4,
+              spaceBetween: 30,
+            },
+            1024: {
+              slidesPerView: 5,
+              spaceBetween: 30,
+            },
+          }}
+        />
       </div>
 
       {/* reviews section */}

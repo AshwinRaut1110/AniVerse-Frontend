@@ -6,8 +6,8 @@ export default {
       colors: {
         "primary-color": "var(--primary-color)",
         "secondary-color": "var(--secondary-color)",
-        "blue-base": "var(--blue-base)",
-        "blue-darker": "var(--blue-darker)",
+        "primary-blue": "var(--primary-blue)",
+        "hover-blue": "var(--hover-blue)",
       },
     },
   },
