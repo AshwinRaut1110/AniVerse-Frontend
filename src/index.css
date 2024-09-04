@@ -7,8 +7,9 @@
 :root {
   --primary-color: #121212;
   --secondary-color: #212121;
-  --blue-base: #007bff;
-  --blue-darker: #1385ff;
+  --primary-blue: #007bff;
+  --hover-blue: #1385ff;
+  --plyr-color-main: var(--primary-blue);
 }
 
 .text-gradient-animation {
@@ -246,4 +247,21 @@ body::-webkit-scrollbar-track {
 
 .swiper-pagination {
   display: none;
+}
+
+/* .plyr {
+  height: 525px !important;
+  width: 927.5px !important;
+} */
+
+.outlinenone {
+  border: none !important;
+  overflow: auto !important;
+  outline: none !important;
+
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+
+  resize: none !important; /*remove the resize handle on the bottom right*/
 }

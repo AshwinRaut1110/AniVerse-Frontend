@@ -13,6 +13,7 @@ import { queryClient } from "./util/http.js";
 import AnimePage from "./pages/AnimePage.jsx";
 import AddNewEpisodePage from "./pages/AddNewEpisodePage.jsx";
 import EditEpisodePage from "./pages/EditEpisodePage.jsx";
+import EpisodePage from "./pages/EpisodePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -51,7 +52,10 @@ const router = createBrowserRouter([
         children: [
           {
             path: ":animeId",
-            element: <AnimePage />,
+            children: [
+              { path: "", element: <AnimePage /> },
+              { path: ":episodeIdentifier", element: <EpisodePage /> },
+            ],
           },
         ],
       },
@@ -61,11 +65,11 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>
     </Provider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

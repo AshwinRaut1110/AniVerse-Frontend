@@ -7,7 +7,7 @@ import NyanLoader from "../UI/NyanLoader";
 import { useParams } from "react-router-dom";
 import ReviewItem from "./ReviewItem";
 import { StarIcon } from "@heroicons/react/24/solid";
-import Dropdown from "../UI/Dropdown/DropdownSelect";
+import Dropdown from "../UI/Dropdown/DropdownOne";
 import {
   AdjustmentsHorizontalIcon,
   Bars3BottomLeftIcon,
