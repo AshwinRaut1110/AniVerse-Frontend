@@ -42,10 +42,10 @@ function CommentsSection({ activeEpisode }) {
   if (isPending) return <p className="text-white text-xl">Loading...</p>;
 
   if (isError)
-    return <p className="text-white text-xl">{error.info.message}</p>;
+    return <p className="text-white text-xl">{error?.info?.message}</p>;
 
   return (
-    <div className="w-full border-2 border-white bg-[#191919] p-7 space-y-3 rounded-md">
+    <div className="w-full bg-[#191919] p-7 space-y-3 rounded-md">
       {/* add comment and top bar */}
       <div className="flex space-x-3">
         <img

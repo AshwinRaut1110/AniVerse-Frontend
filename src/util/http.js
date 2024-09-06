@@ -264,6 +264,25 @@ export async function getComments({
   return await handleResponse(response);
 }
 
+export async function getReplies({
+  episodeId,
+  commentId,
+  signal,
+  sort,
+  pageParam,
+  limit,
+}) {
+  let url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/episodes/${episodeId}/comments/${commentId}/replies?page=${pageParam}&limit=${limit}`;
+
+  if (sort) url += `&sort=${sort}`;
+
+  const response = await fetch(url, { signal });
+
+  return await handleResponse(response);
+}
+
 export async function createAComment({ comment, episodeId }) {
   const url = `${
     import.meta.env.VITE_API_URL
@@ -276,6 +295,23 @@ export async function createAComment({ comment, episodeId }) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ comment }),
+  });
+
+  return await handleResponse(response);
+}
+
+export async function replyToAComment({ comment, episodeId, parent }) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/episodes/${episodeId}/comments`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `bearer ${getAuthToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ comment, parent }),
   });
 
   return await handleResponse(response);

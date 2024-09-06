@@ -21,49 +21,52 @@ import {
   createAComment,
   findUserLike,
   queryClient,
+  replyToAComment,
   updateAComment,
 } from "../../../../util/http";
 import { notificationActions } from "../../../../store/NotificationSlice";
-import Like from "./LikeDislike";
+import Replies from "./Replies";
+import LikeDislike from "./LikeDislike";
 
 const updateCommentsOnCommentCreated = (episodeId, data) => {
-  queryClient.setQueryData(
-    ["episodes", episodeId, "comments"],
-    function (oldData) {
-      const updatedData = JSON.parse(JSON.stringify(oldData));
-      updatedData.pages[0].data.comments = [
-        data.data.comment,
-        ...updatedData.pages[0].data.comments,
-      ];
-
-      return updatedData;
-    }
-  );
+  queryClient.refetchQueries({
+    queryKey: ["episodes", episodeId, "comments"],
+  });
 };
 
-const updateCommentsOnCommentUpdated = (
+const updateCommentsOnCommentUpdated = ({
   episodeId,
   data,
   commentId,
-  pageParam
-) => {
-  queryClient.setQueryData(
-    ["episodes", episodeId, "comments"],
-    function (oldData) {
-      const updatedData = JSON.parse(JSON.stringify(oldData));
+  pageParam,
+  parentId,
+}) => {
+  const queryKey = parentId
+    ? ["episodes", episodeId, "comments", parentId, "replies"]
+    : ["episodes", episodeId, "comments"];
 
-      const commentIndex = updatedData.pages[pageParam].data.comments.findIndex(
-        (comment) => comment._id === commentId
-      );
+  const arrayName = parentId ? "replies" : "comments";
 
-      if (commentIndex === -1) return oldData;
+  queryClient.setQueryData(queryKey, function (oldData) {
+    const updatedData = JSON.parse(JSON.stringify(oldData));
 
-      updatedData.pages[pageParam].data.comments[commentIndex].comment =
-        data.data.comment.comment;
+    const commentIndex = updatedData.pages[pageParam].data[arrayName].findIndex(
+      (comment) => comment._id === commentId
+    );
 
-      return updatedData;
-    }
-  );
+    if (commentIndex === -1) return oldData;
+
+    updatedData.pages[pageParam].data[arrayName][commentIndex].comment =
+      data.data.comment.comment;
+
+    return updatedData;
+  });
+};
+
+const updateRepliesOnReplyCreated = ({ episodeId, commentId }) => {
+  queryClient.refetchQueries({
+    queryKey: ["episodes", episodeId, "comments", commentId, "replies"],
+  });
 };
 
 // type = create | update | reply
@@ -75,6 +78,7 @@ export function CommentInput({
   onCancel,
   commentId,
   pageParam,
+  parentId,
 }) {
   const [showControls, setShowControls] = useState(false);
   const commentInputRef = useRef(null);
@@ -96,6 +100,7 @@ export function CommentInput({
     case "reply":
       placeholder = "reply to this comment.";
       buttonText = "Reply";
+      mutationFn = replyToAComment;
       break;
   }
 
@@ -105,7 +110,20 @@ export function CommentInput({
     onSuccess: function (data) {
       if (type === "create") updateCommentsOnCommentCreated(episodeId, data);
       else if (type === "update") {
-        updateCommentsOnCommentUpdated(episodeId, data, commentId, pageParam);
+        updateCommentsOnCommentUpdated({
+          episodeId,
+          data,
+          commentId,
+          pageParam,
+          parentId,
+        });
+        onCancel();
+      } else if (type === "reply") {
+        updateRepliesOnReplyCreated({
+          episodeId,
+          data,
+          commentId: parentId,
+        });
         onCancel();
       }
 
@@ -130,6 +148,7 @@ export function CommentInput({
 
     const mutatationData = { comment, episodeId };
     if (type === "update") mutatationData["commentId"] = commentId;
+    if (type === "reply") mutatationData["parent"] = parentId;
 
     mutate(mutatationData);
 
@@ -202,20 +221,23 @@ function Comment({ commentData, pageParam }) {
     profilePicture,
     comment,
     createdAt,
+    likes,
+    dislikes,
+    numberOfReplies,
+    parent: parentId,
     episode: episodeId,
   } = commentData;
 
-  const [likes, setLikes] = useState(commentData.likes);
-  const [dislikes, setDislikes] = useState(commentData.dislikes);
   const [likeData, setLikeData] = useState(null);
   const [showReplyBox, setShowReplyBox] = useState(false);
+  const [isRepliesSectionOpen, setIsRepliesSectionOpen] = useState(false);
 
   const currentUser = useSelector((state) => state.auth?.user);
 
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["comments", commentId, "like", commentId, currentUser.username],
     queryFn: ({ signal }) => findUserLike({ signal, commentId, episodeId }),
-    staleTime: Infinity,
+    retry: false,
     enabled: !!currentUser,
   });
 
@@ -227,19 +249,20 @@ function Comment({ commentData, pageParam }) {
 
   const createdTimeAgo = timeAgo(createdAt);
 
-  const handleLike = (isNew, newData) => {
-    setLikes((prevValue) => prevValue + 1);
-    if (!isNew) setDislikes((prevValue) => prevValue - 1);
+  const handleLikeDislike = () => {
+    queryClient.refetchQueries({
+      queryKey: ["episodes", episodeId, "comments"],
+    });
 
-    // required for showing the colors on the like and dislike button
-    setLikeData(newData);
-  };
-
-  const handleDislike = (isNew, newData) => {
-    setDislikes((prevValue) => prevValue + 1);
-    if (!isNew) setLikes((prevValue) => prevValue - 1);
-
-    setLikeData(newData);
+    queryClient.refetchQueries({
+      queryKey: [
+        "comments",
+        commentId,
+        "like",
+        commentId,
+        currentUser.username,
+      ],
+    });
   };
 
   // const { windowSize } = useWindowDimensions();
@@ -254,25 +277,25 @@ function Comment({ commentData, pageParam }) {
         <span>Reply</span>
       </button>
 
-      <Like
+      <LikeDislike
         value={likes}
         commentId={commentId}
         episodeId={episodeId}
         isPending={isPending}
         likeData={likeData}
-        onSuccess={handleLike}
+        onSuccess={handleLikeDislike}
         IconOutline={HandThumbUpIconOutline}
         IconSolid={HandThumbUpIconSolid}
         type="like"
       />
 
-      <Like
+      <LikeDislike
         value={dislikes}
         commentId={commentId}
         episodeId={episodeId}
         isPending={isPending}
         likeData={likeData}
-        onSuccess={handleDislike}
+        onSuccess={handleLikeDislike}
         IconOutline={HandThumbDownIconOutline}
         IconSolid={HandThumbDownIconSolid}
         type="dislike"
@@ -291,7 +314,7 @@ function Comment({ commentData, pageParam }) {
   );
 
   return (
-    <div className="flex space-x-4 w-full border-2 border-red-300 p-2">
+    <div className="flex space-x-4 w-full  p-2">
       <img
         src={profilePicture || defaultProfile}
         className="h-20 w-20 rounded-full"
@@ -314,6 +337,7 @@ function Comment({ commentData, pageParam }) {
             commentId={commentId}
             episodeId={episodeId}
             pageParam={pageParam}
+            parentId={parentId}
           />
         ) : (
           <p className="w-full text-white">{comment}</p>
@@ -321,15 +345,25 @@ function Comment({ commentData, pageParam }) {
 
         {controlsDivContent}
 
-        {/* reply div */}
+        {/* reply input */}
         {showReplyBox && (
           <CommentInput
             type="reply"
             onCancel={() => setShowReplyBox(false)}
-            commentId={commentId}
             episodeId={episodeId}
+            parentId={commentId}
+            pageParam={pageParam}
           />
         )}
+
+        {/* reply div */}
+        <Replies
+          commentId={commentId}
+          episodeId={episodeId}
+          isRepliesSectionOpen={isRepliesSectionOpen}
+          setIsRepliesSectionOpen={setIsRepliesSectionOpen}
+          numberOfReplies={numberOfReplies}
+        />
       </div>
     </div>
   );
