@@ -32,6 +32,12 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
+    updateAuthState(state, { payload }) {
+      if (payload.token) state.token = payload.token;
+      if (payload.user) state.user = payload.user;
+      localStorage.removeItem("authData");
+      localStorage.setItem("authData", JSON.stringify(state));
+    },
   },
   extraReducers: (builder) => {
     // adding reducers to handle the auth flow loading, fullfilled and rejected states

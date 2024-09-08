@@ -9,7 +9,8 @@ function WatchListRows({ rowOneData, rowTwoData }) {
               className={`w-2 sm:w-4 h-2 sm:h-4 rounded-full`}
               style={{ backgroundColor: color }}
             />
-            <p className="flex-grow text-[#abc4ed] text-[0.65rem] sm:text-sm text-sm font-[Lato]">
+            {/* <p className="flex-grow text-[#abc4ed] text-[0.65rem] sm:text-sm text-sm font-[Lato]"> */}
+            <p className="flex-grow text-[#a3a3a3] text-[0.65rem] sm:text-sm text-sm font-[Lato]">
               {title}
             </p>
             <p className="text-[#e0e0e0] text-[0.65rem] sm:text-sm font-[Lato]">

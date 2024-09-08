@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
-function DistributionChart({ className, data }) {
+function DistributionChart({ className, data, placeHolderText }) {
   const [width, setWidth] = useState(0);
   const chartRef = useRef(null);
 
@@ -12,6 +12,17 @@ function DistributionChart({ className, data }) {
   useEffect(() => {
     setWidth(chartRef.current.offsetWidth);
   }, []);
+
+  if (totalValue === 0)
+    return (
+      <div
+        style={{ height: "25px" }}
+        className={className + " flex text-white text-md font-[Lato]"}
+        ref={chartRef}
+      >
+        {placeHolderText}
+      </div>
+    );
 
   return (
     <div className={className + " flex"} ref={chartRef}>

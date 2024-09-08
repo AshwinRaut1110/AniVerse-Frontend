@@ -130,3 +130,82 @@ export function timeAgo(dateString) {
 
   return "just now";
 }
+
+export function returnUserStats(stats) {
+  {
+    return {
+      userStatsColOne: [
+        {
+          title: "Helpful Votes",
+          value: stats.helpfulVotes,
+          color: "#10D03C",
+        },
+        {
+          title: "Not Helpful Votes",
+          value: stats.notHelpfulVotes,
+          color: "#DC3545",
+        },
+      ],
+      userStatsColTwo: [
+        {
+          title: "Reviews Given",
+          value: stats.reviewsGiven,
+        },
+        {
+          title: "Comments Made",
+          value: stats.commentsMade,
+        },
+      ],
+    };
+  }
+}
+
+export function returnWatchlistStats(watchlistStats) {
+  const listStats = {
+    watchlistStatsColOne: [
+      {
+        title: "Watching",
+        value: watchlistStats.watching,
+        color: "#FF6384",
+      },
+      {
+        title: "Plan to Watch",
+        value: watchlistStats.planToWatch,
+        color: "#9966FF",
+      },
+      {
+        title: "Dropped",
+        value: watchlistStats.dropped,
+        color: "#4BC0C0",
+      },
+      {
+        title: "Completed",
+        value: watchlistStats.completed,
+        color: "#FFCE56",
+      },
+      {
+        title: "On Hold",
+        value: watchlistStats.onHold,
+        color: "#36A2EB",
+      },
+    ],
+  };
+
+  const totalWatched = listStats.watchlistStatsColOne.reduce(
+    (currSum, { value }) => currSum + value,
+    0
+  );
+
+  listStats["watchlistStatsColTwo"] = [
+    {
+      title: "Total Entries",
+      value: totalWatched,
+    },
+    {
+      title: "Episodes Watched",
+      value: watchlistStats.episodesWatched,
+    },
+  ];
+
+  return listStats;
+}

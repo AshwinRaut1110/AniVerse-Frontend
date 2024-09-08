@@ -379,4 +379,52 @@ export async function findUserLike({ signal, commentId, episodeId }) {
   return await handleResponse(response);
 }
 
+export async function UpdateUserPassword(passwordData) {
+  const url = `${import.meta.env.VITE_API_URL}/api/v1/users/update-my-password`;
+
+  const response = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(passwordData),
+  });
+
+  return await handleResponse(response);
+}
+
+export async function updateUserProfile(userData) {
+  console.log(userData);
+
+  const url = `${import.meta.env.VITE_API_URL}/api/v1/users`;
+
+  const response = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userData),
+  });
+
+  return await handleResponse(response);
+}
+
+export async function updateUserProfilePicture(formData) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/users/update-my-profile-pic`;
+
+  const response = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+    body: formData,
+  });
+
+  return await handleResponse(response);
+}
+
 export const queryClient = new QueryClient();
