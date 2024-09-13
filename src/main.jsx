@@ -14,6 +14,7 @@ import AnimePage from "./pages/AnimePage.jsx";
 import AddNewEpisodePage from "./pages/AddNewEpisodePage.jsx";
 import EditEpisodePage from "./pages/EditEpisodePage.jsx";
 import EpisodePage from "./pages/EpisodePage.jsx";
+import BrowsePage from "./pages/BrowsePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: "browse",
+        element: <BrowsePage />,
+      },
     ],
   },
   ,
@@ -66,10 +71,10 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </Provider>
+  <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  </Provider>
   // </React.StrictMode>
 );

@@ -3,8 +3,18 @@ import store from "../store/store";
 import { QueryClient } from "@tanstack/react-query";
 
 // get multiple animes
-export async function getAnimes(url, signal) {
-  const response = await fetch(url, { signal });
+export async function getAnimes(queryObject, signal) {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/v1/animes/get-animes`,
+    {
+      signal,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(queryObject),
+    }
+  );
 
   return await handleResponse(response);
 }

@@ -21,10 +21,14 @@ function LoggedInDropdown() {
         </div>
       </Link>
 
-      <div className="hover:bg-secondary-color cursor-pointer py-3 px-6 space-y-1">
-        <p className="text-md">Browse</p>
-        <p className="text-sm text-gray-400">Browse and discover new animes.</p>
-      </div>
+      <Link to="/browse">
+        <div className="hover:bg-secondary-color cursor-pointer py-3 px-6 space-y-1">
+          <p className="text-md">Browse</p>
+          <p className="text-sm text-gray-400">
+            Browse and discover new animes.
+          </p>
+        </div>
+      </Link>
 
       <div
         className="hover:bg-secondary-color cursor-pointer py-3 px-6 space-y-1"
