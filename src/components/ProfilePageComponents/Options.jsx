@@ -1,28 +1,11 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import ProfileSettings from "./ProfileSettings/ProfileSettings";
-import Watchlist from "./Watchlist/Watchlist";
 
-const TABS = [
-  {
-    title: "Profile Settings",
-    id: "profilesettings",
-  },
-  {
-    title: "Watchlist",
-    id: "watchlist",
-  },
-  {
-    title: "History",
-    id: "history",
-  },
-];
-
-function Options() {
+function Options({ TABS }) {
   const [activeTab, setActiveTab] = useState(TABS[0].id);
 
   return (
-    <div className="w-full rounded-xl bg-[#191919] shadow-md h-[50rem] mt-20">
+    <div className="w-full rounded-xl bg-[#191919] shadow-md min-h-[50rem] mt-20">
       {/* nav div */}
       <div className="grid grid-cols-3 w-full h-20 bg-transparent border-b-2 border-gray-500">
         {TABS.map(({ id, title }) => (
@@ -43,8 +26,7 @@ function Options() {
       </div>
 
       <AnimatePresence mode="wait">
-        {activeTab === "profilesettings" && <ProfileSettings />}
-        {activeTab === "watchlist" && <Watchlist />}
+        {TABS.find(({ id }) => id === activeTab).component}
       </AnimatePresence>
     </div>
   );

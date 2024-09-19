@@ -8,6 +8,8 @@ import { updateUserProfilePicture } from "../util/http";
 import { notificationActions } from "../store/NotificationSlice";
 import { authActions } from "../store/authSlice";
 import NyanLoader from "../components/UI/NyanLoader";
+import ProfileSettings from "../components/ProfilePageComponents/ProfileSettings/ProfileSettings";
+import Watchlist from "../components/ProfilePageComponents/Watchlist/Watchlist";
 
 function ProfilePage() {
   const { user } = useSelector((state) => state.auth);
@@ -90,7 +92,25 @@ function ProfilePage() {
       </div>
 
       {/* Profile page options (settings, watchlist) */}
-      <Options />
+      <Options
+        TABS={[
+          {
+            title: "Profile Settings",
+            id: "profilesettings",
+            component: <ProfileSettings />,
+          },
+          {
+            title: "Watchlist",
+            id: "watchlist",
+            component: <Watchlist />,
+          },
+          {
+            title: "History",
+            id: "history",
+            component: <ProfileSettings />,
+          },
+        ]}
+      />
     </div>
   );
 }

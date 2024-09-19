@@ -3,10 +3,10 @@ import React from "react";
 import { getAnimes } from "../../util/http";
 import AnimeCardSmall from "./AnimeCardSmall";
 
-function AnimesSection({ title, url, fullWidth }) {
+function AnimesSection({ title, searchFilters, fullWidth }) {
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["animes"],
-    queryFn: ({ signal }) => getAnimes(url, signal),
+    queryFn: ({ signal }) => getAnimes({searchFilters, signal, pageParam: 1, limit: 5}),
   });
 
   return (

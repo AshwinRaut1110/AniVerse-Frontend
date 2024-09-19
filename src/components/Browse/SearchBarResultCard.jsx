@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { applyCharacterLimit } from "../../util/misc";
 import Dot from "../UI/Dot";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
@@ -11,19 +11,13 @@ const charLimit = {
   lg: 40,
   xl: 60,
 };
-function AnimeCardSmall({ anime, onSearchResultClicked }) {
+function SearchBarResultCard({ anime, onSearchResultClicked }) {
   const { windowSize } = useWindowDimensions();
-  const navigate = useNavigate();
-
-  const handleSearchResultClicked = () => {
-    navigate(`/animes/${anime._id}`);
-    onSearchResultClicked();
-  };
 
   return (
     <div
       className="flex items-center w-full text-white shadow-md bg-[#191919] border border-[#222222] h-28 rounded-md cursor-pointer space-x-4 p-2"
-      onClick={handleSearchResultClicked}
+      onClick={() => onSearchResultClicked(anime)}
     >
       <img
         src={anime.thumbnail}
@@ -52,4 +46,4 @@ function AnimeCardSmall({ anime, onSearchResultClicked }) {
   );
 }
 
-export default AnimeCardSmall;
+export default SearchBarResultCard;

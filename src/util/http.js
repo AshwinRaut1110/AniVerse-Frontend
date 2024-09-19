@@ -3,7 +3,7 @@ import store from "../store/store";
 import { QueryClient } from "@tanstack/react-query";
 
 // get multiple animes
-export async function getAnimes(queryObject, signal) {
+export async function getAnimes({ searchFilters, signal, pageParam, limit }) {
   const response = await fetch(
     `${import.meta.env.VITE_API_URL}/api/v1/animes/get-animes`,
     {
@@ -12,7 +12,7 @@ export async function getAnimes(queryObject, signal) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(queryObject),
+      body: JSON.stringify({ page: pageParam, limit, ...searchFilters }),
     }
   );
 
@@ -72,7 +72,7 @@ const getAuthToken = () => {
 };
 
 // common response handler function
-const handleResponse = async (response, wasDeleteRequest) => {
+const handleResponse = async (response) => {
   if (!response.ok) {
     // check for 401 and 403 status codes, and if the user is logged in if yes the user should be logged out
     if ([401, 403].includes(response.status) && getAuthToken()) {
@@ -86,7 +86,7 @@ const handleResponse = async (response, wasDeleteRequest) => {
     throw error;
   }
 
-  return wasDeleteRequest ? null : await response.json();
+  return response.status === 204 ? null : await response.json();
 };
 
 export async function getUserReview(animeId, signal) {
@@ -253,7 +253,7 @@ export async function deleteEpisodeVariant({
     },
   });
 
-  return await handleResponse(response, true);
+  return await handleResponse(response);
 }
 
 export async function getComments({
@@ -432,6 +432,74 @@ export async function updateUserProfilePicture(formData) {
       Authorization: `Bearer ${getAuthToken()}`,
     },
     body: formData,
+  });
+
+  return await handleResponse(response);
+}
+
+export async function getMyWatchlist({ signal, filterOption, pageParam }) {
+  let url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/watchlist/my-watchlist?page=${pageParam}&limit=12`;
+
+  if (filterOption != "all") url += `&status=${filterOption}`;
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+    signal,
+  });
+
+  return await handleResponse(response);
+}
+
+export async function getUserWatchlist({ url, signal }) {
+  const response = await fetch(url);
+}
+
+export async function addAnimeToWatchlist({ watchlistEntryData }) {
+  let url = `${import.meta.env.VITE_API_URL}/api/v1/watchlist`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(watchlistEntryData),
+  });
+
+  return await handleResponse(response);
+}
+
+export async function updateWatchlistEntry({ watchlistEntryId, updates }) {
+  let url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/watchlist/${watchlistEntryId}`;
+
+  const response = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updates),
+  });
+
+  return await handleResponse(response);
+}
+
+export async function deleteWatchlistEntry({ watchlistEntryId }) {
+  let url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/watchlist/${watchlistEntryId}`;
+
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
   });
 
   return await handleResponse(response);

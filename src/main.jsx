@@ -15,12 +15,14 @@ import AddNewEpisodePage from "./pages/AddNewEpisodePage.jsx";
 import EditEpisodePage from "./pages/EditEpisodePage.jsx";
 import EpisodePage from "./pages/EpisodePage.jsx";
 import BrowsePage from "./pages/BrowsePage.jsx";
+import HomePage from "./pages/HomePage.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
+      { path: "", element: <HomePage /> },
       { path: "profile", element: <ProfilePage /> },
       {
         path: "studio",

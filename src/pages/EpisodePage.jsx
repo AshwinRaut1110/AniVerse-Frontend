@@ -77,9 +77,11 @@ function EpisodePage() {
         {windowSize !== "lg" && (
           <AnimesSection
             title="Top Rated"
-            url={`${
-              import.meta.env.VITE_API_URL
-            }/api/v1/animes?sort=-averageRating&limit=5`}
+            searchFilters={{
+              sort: {
+                averageRating: -1,
+              },
+            }}
           />
         )}
       </div>
@@ -88,9 +90,11 @@ function EpisodePage() {
       {windowSize === "lg" && (
         <AnimesSection
           title="Top Rated"
-          url={`${
-            import.meta.env.VITE_API_URL
-          }/api/v1/animes?sort=-averageRating&limit=5`}
+          searchFilters={{
+            sort: {
+              averageRating: -1,
+            },
+          }}
         />
       )}
 
@@ -128,9 +132,11 @@ function EpisodePage() {
         {/* recommended anime */}
         <AnimesSection
           title="Recommended"
-          url={`${import.meta.env.VITE_API_URL}/api/v1/animes?genres=${
-            data.data.anime.genres[0]
-          }&limit=5`}
+          searchFilters={{
+            filter: {
+              genres: [data.data.anime.genres[0]],
+            },
+          }}
           fullWidth={!data.data.anime.relatedAnimes.length}
         />
       </div>

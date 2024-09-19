@@ -1,17 +1,18 @@
-import AnimeCardSmall from "../Anime/AnimeCard";
+import { Fragment } from "react";
+import BrowsePageResultCard from "../Anime/AnimeCards/BrowsePageResultCard";
 
-function AnimeGrid({ animes, mode }) {
-  if (mode === "seasons") {
-    return (
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 w-full mx-auto">
-        {animes.map(({ anime, relation }) => (
-          <AnimeCardSmall anime={anime} relation={relation} key={anime._id} />
-        ))}
-      </div>
-    );
-  } else if (mode === "related") {
-  } else {
-  }
+function AnimeGrid({ pages }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full mx-auto">
+      {pages.map((page, index) => (
+        <Fragment key={index}>
+          {page.data.animes.map((anime) => (
+            <BrowsePageResultCard anime={anime} key={anime._id} />
+          ))}
+        </Fragment>
+      ))}
+    </div>
+  );
 }
 
 export default AnimeGrid;
