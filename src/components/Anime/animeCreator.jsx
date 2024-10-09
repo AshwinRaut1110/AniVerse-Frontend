@@ -1,6 +1,6 @@
 import { PencilIcon } from "@heroicons/react/24/outline";
 import Input from "../UI/Inputs/Input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "../UI/Inputs/Select";
 import { GENRES } from "../../util/constants";
 import DynamicInputList from "../UI/Inputs/DynamicInputList";
@@ -36,12 +36,10 @@ const initialState = {
   producers: [""],
   studios: [""],
   description: "",
-  relatedAnimes: [""],
+  relatedAnimes: [{ anime: "", relation: "" }],
 };
 
-function AnimeCreator({ existingAnimeData }) {
-  const { animeId } = useParams();
-
+function AnimeCreator({ existingAnimeData, mode, animeId }) {
   // anime data states
   const [animeData, setAnimeData] = useState(existingAnimeData || initialState);
   const [genres, setGenres] = useState(
@@ -57,9 +55,18 @@ function AnimeCreator({ existingAnimeData }) {
     existingAnimeData?.description || initialState.description
   );
   const [relatedAnimes, setRelatedAnimes] = useState(
-    existingAnimeData?.relatedAnimes ||
-      initialState.relatedAnimes || [{ anime: "", relation: "" }]
+    existingAnimeData?.relatedAnimes || [{ anime: "", relation: "" }]
   );
+
+  useEffect(() => {
+    if (!existingAnimeData) return;
+    setAnimeData(existingAnimeData);
+    setGenres(existingAnimeData.genres);
+    setProducers(existingAnimeData.producers);
+    setStudios(existingAnimeData.studios);
+    setDescription(existingAnimeData.description);
+    setRelatedAnimes(existingAnimeData.relatedAnimes);
+  }, [existingAnimeData]);
 
   const [showError, setShowError] = useState(false);
 
@@ -76,7 +83,7 @@ function AnimeCreator({ existingAnimeData }) {
 
   // mutation for sending the new anime data to the api
   const { mutate, isPending, isError, error } = useMutation({
-    mutationFn: animeId ? updateAnime : createAnime,
+    mutationFn: mode === "update" ? updateAnime : createAnime,
     onSuccess: function (data) {
       setAnimeData(data.data.anime);
 
@@ -88,7 +95,7 @@ function AnimeCreator({ existingAnimeData }) {
         notificationActions.showSuccessNotification({
           title: "Success",
           message: `${data.data.anime.names.english} was ${
-            animeId ? "updated" : "added"
+            mode === "update" ? "updated" : "added"
           } successfully.`,
         })
       );
@@ -123,7 +130,7 @@ function AnimeCreator({ existingAnimeData }) {
 
     formData.append("animeData", JSON.stringify(newAnime));
 
-    if (animeId) mutate({ formData, animeId });
+    if (mode === "update") mutate({ formData, animeId });
     else mutate(formData);
   };
 
@@ -198,7 +205,7 @@ function AnimeCreator({ existingAnimeData }) {
   };
 
   return (
-    <div className="flex w-full flex-col items-center justify-center pt-20">
+    <div className="flex w-full flex-col items-center justify-center pt-14">
       {/* banner container */}
       <label className="relative group cursor-pointer" htmlFor="anime-banner">
         {(bannerPreview || animeData.banner) && (
@@ -215,7 +222,7 @@ function AnimeCreator({ existingAnimeData }) {
         )}
 
         {(bannerPreview || animeData.banner) && (
-          <div className="flex items-center justify-center w-[95vw] [1.77/1] border-2 border-white mx-auto ">
+          <div className="flex items-center justify-center w-[95vw] aspect-[1.77/1] border-2 border-white mx-auto ">
             <img
               src={bannerPreview || animeData.banner}
               alt="banner"
@@ -513,7 +520,7 @@ function AnimeCreator({ existingAnimeData }) {
           {/* form actions div */}
           <div className="flex justify-end w-full pt-10">
             <button className="bg-[#007bff] hover:bg-[#1385ff] text-white w-full py-6 text-3xl font-bold rounded-full active:scale-95 transition-all ease-in-out outline-none">
-              {animeId ? "Update Anime" : "Add Anime"}
+              {mode === "update" ? "Update Anime" : "Add Anime"}
             </button>
           </div>
         </form>

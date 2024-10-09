@@ -2,87 +2,55 @@ import React, { useState } from "react";
 import Input from "../../UI/Inputs/Input";
 import DateInput from "../../UI/Inputs/Date";
 import TextareaInput from "../../UI/Inputs/TextareaInput";
-import { useParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { addEpisode, queryClient, updateEpisode } from "../../../util/http";
 import ErrorComponent from "../../UI/ErrorComponent";
 import { useDispatch } from "react-redux";
 import { notificationActions } from "../../../store/NotificationSlice";
 import EpisodeVariantUploader from "./EpisodeVariantUploader";
-import NyanLoader from "../../UI/NyanLoader";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
-const initialState = {
-  title: {
-    english: "",
-    japanese: "",
-  },
-  episodeNumber: "",
-  anime: "",
-  description: "",
-  releasedAt: "",
-  createdAt: "",
-  thumbnail: "",
-  streamLink: "",
-  versions: {
-    360: false,
-    480: false,
-    720: false,
-  },
-};
-
-function EpisodeCreator({ existingEpisodeData }) {
-  const { episodeIdentifier, animeId } = useParams();
-
-  const [episodeData, setEpisodeData] = useState(
-    existingEpisodeData || initialState
-  );
-
+function EpisodeCreator({
+  episodeData,
+  mode,
+  setEpisodeData,
+  onEpisodeDataReset,
+}) {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
 
-  const { mutate, isPending: isAddEpisodePending } = useMutation({
-    mutationFn: addEpisode,
+  const { mutate, isPending } = useMutation({
+    mutationFn: mode === "update" ? updateEpisode : addEpisode,
     onSuccess(data) {
-      setEpisodeData(data.data.createdEpisode);
+      const episode =
+        mode === "add" ? data.data.createdEpisode : data.data.episode;
+      setEpisodeData(episode);
 
       dispatch(
         notificationActions.showSuccessNotification({
           title: "Success",
-          message: `Episode added successfully.`,
+          message: `Episode ${
+            mode === "update" ? "updated" : "added"
+          } successfully.`,
         })
       );
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "animes",
+          episode.anime,
+          "episodes",
+          String(episode.episodeNumber),
+        ],
+      });
     },
     onError(error) {
       setError(error);
       setShowError(true);
     },
   });
-
-  // complete this, me from tommorow
-  const { mutate: mutateUpdateEpisode, isPending: isUpdateEpisodePending } =
-    useMutation({
-      mutationFn: updateEpisode,
-      onSuccess(data) {
-        setEpisodeData(data.data.episode);
-
-        dispatch(
-          notificationActions.showSuccessNotification({
-            title: "Success",
-            message: `Episode updated successfully.`,
-          })
-        );
-
-        queryClient.invalidateQueries({
-          queryKey: ["animes", animeId, "episodes", episodeIdentifier],
-        });
-      },
-      onError(error) {
-        setShowError(true);
-        setError(error);
-      },
-    });
 
   const handleNestedValueChanged = (nestedField, value, parentField) => {
     setEpisodeData((prevEpisodeData) => ({
@@ -98,32 +66,20 @@ function EpisodeCreator({ existingEpisodeData }) {
     }));
   };
 
-  const handleAddEpisode = () => {
+  const handleMutateEpisode = () => {
     const data = {
       ...episodeData,
-      anime: animeId,
     };
 
     delete data.createdAt;
-    delete data._id;
     delete data.versions;
     delete data.streamLink;
     delete data.thumbnail;
+
+    if (mode === "add") delete data._id;
+    console.log(data);
 
     mutate(data);
-  };
-
-  const handleUpdateEpisode = () => {
-    const data = {
-      ...episodeData,
-    };
-
-    delete data.createdAt;
-    delete data.versions;
-    delete data.streamLink;
-    delete data.thumbnail;
-
-    mutateUpdateEpisode(data);
   };
 
   return (
@@ -133,8 +89,7 @@ function EpisodeCreator({ existingEpisodeData }) {
         e.preventDefault();
         setError(null);
         setShowError(false);
-        if (episodeIdentifier) handleUpdateEpisode();
-        else handleAddEpisode();
+        handleMutateEpisode();
       }}
     >
       {showError && (
@@ -164,7 +119,7 @@ function EpisodeCreator({ existingEpisodeData }) {
       </div>
 
       <div className="grid grid-cols-3 gap-10">
-        <Input id="anime" readOnly value={animeId} label="anime" />
+        <Input id="anime" readOnly value={episodeData.anime} label="anime" />
         <DateInput
           id="releasedAt"
           value={episodeData.releasedAt}
@@ -195,7 +150,7 @@ function EpisodeCreator({ existingEpisodeData }) {
       </div>
 
       {/* episode upload section */}
-      {episodeIdentifier && (
+      {mode === "update" && (
         <>
           <h3 className="text-lg sm:text-xl md:text-2xl lg:text-4xl font-[Lato] font-bold text-[#007bff]">
             Manage Episode Variants
@@ -203,23 +158,46 @@ function EpisodeCreator({ existingEpisodeData }) {
 
           <div className="grid grid-cols-3 gap-10">
             {/* 360p variant */}
-            <EpisodeVariantUploader episodeData={episodeData} version={360} />
+            <EpisodeVariantUploader
+              episodeData={episodeData}
+              version={360}
+              setEpisodeData={setEpisodeData}
+            />
 
             {/* 480p variant */}
-            <EpisodeVariantUploader episodeData={episodeData} version={480} />
+            <EpisodeVariantUploader
+              episodeData={episodeData}
+              version={480}
+              setEpisodeData={setEpisodeData}
+            />
 
             {/* 720p variant */}
-            <EpisodeVariantUploader episodeData={episodeData} version={720} />
+            <EpisodeVariantUploader
+              episodeData={episodeData}
+              version={720}
+              setEpisodeData={setEpisodeData}
+            />
           </div>
         </>
       )}
 
-      <button
-        className="self-end bg-[#007bff] hover:bg-[#1385ff] text-white w-full md:w-[50%] py-6 text-3xl font-bold rounded-full active:scale-95 transition-all ease-in-out outline-none disabled:bg-gray-400"
-        disabled={isAddEpisodePending || isUpdateEpisodePending}
-      >
-        {episodeIdentifier ? "Update Episode" : "Add Episode"}
-      </button>
+      <div className="flex justify-between">
+        <button
+          className="flex items-center justify-center rounded-full bg-[#ff6b6b] hover:bg-[#ff5252] h-20 w-20 active:scale-95 transition-all ease-in-out outline-none"
+          onClick={onEpisodeDataReset}
+          type="button"
+        >
+          <ArrowPathIcon className="text-white h-14" />
+        </button>
+
+        <button
+          className="bg-[#007bff] hover:bg-[#1385ff] text-white w-full md:w-[50%] py-6 text-3xl font-bold rounded-full active:scale-95 transition-all ease-in-out outline-none disabled:bg-gray-400"
+          disabled={isPending}
+          type="submit"
+        >
+          {mode === "update" ? "Update Episode" : "Add Episode"}
+        </button>
+      </div>
     </form>
   );
 }

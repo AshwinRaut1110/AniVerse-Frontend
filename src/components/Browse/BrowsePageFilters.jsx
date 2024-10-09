@@ -5,7 +5,7 @@ import {
   seasonOptions,
   statusOptions,
   typeOptions,
-} from "../../util/filterOptions";
+} from "../../util/constants";
 import DropdownThree from "../UI/Dropdown/DropdownThree";
 import DatePicker from "../UI/Inputs/DatePicker";
 import { GENRES } from "../../util/constants";

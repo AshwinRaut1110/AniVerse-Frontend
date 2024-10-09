@@ -110,6 +110,7 @@ function ProfilePage() {
             component: <ProfileSettings />,
           },
         ]}
+        numberOfTabs={3}
       />
     </div>
   );

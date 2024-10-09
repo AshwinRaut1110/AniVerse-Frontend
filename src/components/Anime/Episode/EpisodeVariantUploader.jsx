@@ -7,16 +7,9 @@ import {
 } from "../../../util/http";
 import { useDispatch } from "react-redux";
 import { notificationActions } from "../../../store/NotificationSlice";
-import { useParams } from "react-router-dom";
 
-function EpisodeVariantUploader({ episodeData, version }) {
+function EpisodeVariantUploader({ episodeData, version, setEpisodeData }) {
   const [inputFile, setInputFile] = useState(null);
-
-  const { episodeIdentifier, animeId } = useParams();
-
-  const [versionExists, setVersionExists] = useState(
-    episodeData.versions[version]
-  );
 
   const dispatch = useDispatch();
 
@@ -26,10 +19,12 @@ function EpisodeVariantUploader({ episodeData, version }) {
     setInputFile(e.target.files[0]);
   };
 
-  const { mutate, isPending, error, isError } = useMutation({
+  // episode upload / update mutation
+  const { mutate: mutateUpload, isPending: isUploadPending } = useMutation({
     mutationFn: uploadEpisodeVariant,
     onSuccess: (data) => {
-      console.log(data);
+      const episode = data.data.episode;
+      setEpisodeData(data.data.episode);
 
       dispatch(
         notificationActions.showSuccessNotification({
@@ -41,14 +36,17 @@ function EpisodeVariantUploader({ episodeData, version }) {
       );
 
       queryClient.invalidateQueries({
-        queryKey: ["animes", animeId, "episodes", episodeIdentifier],
+        queryKey: [
+          "animes",
+          episode.anime,
+          "episodes",
+          String(episode.episodeNumber),
+        ],
       });
 
       setInputFile(null);
-
-      setVersionExists(true);
     },
-    onError: (error) => {
+    onError() {
       dispatch(
         notificationActions.showErrorNotification({
           title: "success",
@@ -58,9 +56,16 @@ function EpisodeVariantUploader({ episodeData, version }) {
     },
   });
 
-  const { mutate: mutateDelete } = useMutation({
+  // episode delete mutation
+  const { mutate: mutateDelete, isPending: isDeletePending } = useMutation({
     mutationFn: deleteEpisodeVariant,
-    onSuccess(data) {
+    onSuccess() {
+      setEpisodeData((prevValue) => {
+        const updatedData = { ...prevValue };
+        updatedData.versions[version] = false;
+        return updatedData;
+      });
+
       dispatch(
         notificationActions.showSuccessNotification({
           title: "success",
@@ -69,12 +74,17 @@ function EpisodeVariantUploader({ episodeData, version }) {
       );
 
       queryClient.invalidateQueries({
-        queryKey: ["animes", animeId, "episodes", episodeIdentifier],
+        queryKey: [
+          "animes",
+          episodeData.anime,
+          "episodes",
+          episodeData.episodeNumber,
+        ],
       });
 
-      setVersionExists(false);
+      setInputFile(null);
     },
-    onError(error) {
+    onError() {
       dispatch(
         notificationActions.showErrorNotification({
           title: "success",
@@ -89,16 +99,20 @@ function EpisodeVariantUploader({ episodeData, version }) {
 
     formData.set("episodeVideo", inputFile);
 
-    mutate({
-      episodeIdentifier,
-      animeId,
+    mutateUpload({
+      episodeIdentifier: episodeData.episodeNumber,
+      animeId: episodeData.anime,
       variantData: formData,
       variant: version,
     });
   };
 
   const handleDeleteVariant = () => {
-    mutateDelete({ episodeIdentifier, animeId, variant: version });
+    mutateDelete({
+      episodeIdentifier: episodeData.episodeNumber,
+      animeId: episodeData.anime,
+      variant: version,
+    });
   };
 
   let btnText = `Add ${version}p Variant`;
@@ -112,7 +126,9 @@ function EpisodeVariantUploader({ episodeData, version }) {
       <label
         htmlFor={version}
         className={`${
-          inputFile
+          isUploadPending
+            ? "bg-gray-400"
+            : inputFile
             ? " bg-orange-500 hover:bg-orange-600"
             : "bg-[#007bff] hover:bg-[#1385ff]"
         } text-white w-full py-6 text-3xl font-bold rounded-full active:scale-95 transition-all ease-in-out outline-none text-center cursor-pointer`}
@@ -130,12 +146,13 @@ function EpisodeVariantUploader({ episodeData, version }) {
         onChange={handleOnInputFileChanged}
       />
 
-      {versionExists && (
+      {episodeData.versions[version] && (
         <button
           type="button"
           className={`bg-[#FF0000] hover:bg-[#DD0000]
-        text-white w-full py-6 text-3xl font-bold rounded-full active:scale-95 transition-all ease-in-out outline-none text-center cursor-pointer`}
+        text-white w-full py-6 text-3xl font-bold rounded-full active:scale-95 transition-all ease-in-out outline-none text-center cursor-pointer disabled:bg-gray-400`}
           onClick={handleDeleteVariant}
+          disabled={isDeletePending}
         >
           Delete {version}p Variant
         </button>

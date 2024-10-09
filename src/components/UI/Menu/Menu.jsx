@@ -61,7 +61,7 @@ function OptionsDropdown() {
             {!user.user && <NoLoginDropdown />}
 
             {/* options if the user is logged in */}
-            {user.user && <LoggedInDropdown />}
+            {user.user && <LoggedInDropdown userRole={user.user.role} />}
           </motion.div>
         )}
       </AnimatePresence>

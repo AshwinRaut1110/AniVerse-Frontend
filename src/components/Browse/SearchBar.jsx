@@ -5,7 +5,12 @@ import AnimeSearchResults from "./AnimeSearchResults";
 import { AnimatePresence } from "framer-motion";
 import NyanLoader from "../UI/NyanLoader";
 
-function SearchBar({ onSearchResultClicked, searchBarColor, placeholder }) {
+function SearchBar({
+  onSearchResultClicked,
+  searchBarColor,
+  placeholder,
+  fullWidth,
+}) {
   const { windowSize } = useWindowDimensions();
 
   const ref = useRef(null);
@@ -30,10 +35,10 @@ function SearchBar({ onSearchResultClicked, searchBarColor, placeholder }) {
     return () => clearTimeout(delayDebounceFn);
   }, [title]);
 
+  let width = "w-full";
   // adjusting the width of the search bar
-  const width = ["lg", "xl"].includes(windowSize)
-    ? "lg:min-w-[30rem] xl:min-w-[40rem]"
-    : "w-full";
+  if (["lg", "xl"].includes(windowSize) && !fullWidth)
+    width = "lg:min-w-[30rem] xl:min-w-[40rem]";
 
   // close the results dropdown on clicks outside the search bar div
   useEffect(() => {

@@ -505,4 +505,61 @@ export async function deleteWatchlistEntry({ watchlistEntryId }) {
   return await handleResponse(response);
 }
 
+export async function addNewSection({ sectionData }) {
+  const url = `${import.meta.env.VITE_API_URL}/api/v1/homepagesection`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(sectionData),
+  });
+
+  return await handleResponse(response);
+}
+
+export async function updateHomePageSection({ sectionData, sectionId }) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/homepagesection/${sectionId}`;
+
+  const response = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(sectionData),
+  });
+
+  return await handleResponse(response);
+}
+
+export async function getHomePageSections({ page, limit, signal, populate, selectPopulate }) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/homepagesection?populate=${populate}&selectPopulate=${selectPopulate}&page=${page}&limit=${limit}&sort=order`;
+
+  const response = await fetch(url, { signal });
+
+  return await handleResponse(response);
+}
+
+export async function deleteHomePageSection({ sectionId }) {
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/api/v1/homepagesection/${sectionId}`;
+
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+  });
+
+  return await handleResponse(response);
+}
+
 export const queryClient = new QueryClient();

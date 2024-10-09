@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
 
-function DropdownThree({
-  options,
-  onOptionSelected,
-  initialSelectedIndex,
-  dropdownName,
-}) {
+function DropdownThree(
+  { options, onOptionSelected, initialSelectedIndex, dropdownName, height } = {
+    height: 11,
+  }
+) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -26,7 +25,7 @@ function DropdownThree({
   }, [initialSelectedIndex]);
 
   return (
-    <div className={`relative h-11`}>
+    <div className={`relative h-${height}`}>
       <span
         className="flex items-center justify-between px-4 space-x-2 w-full h-full bg-[#212121] border border-[#171717] shadow-md rounded-md p-1 text-gray-400 cursor-pointer select-none"
         onClick={handleToggleDropdown}
@@ -56,7 +55,7 @@ function DropdownThree({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ type: "spring", duration: 0.5 }}
-            className="absolute w-full top-12 flex flex-col bg-[#212121] border border-[#171717] shadow-md rounded-md py-2 text-gray-400 cursor-pointer select-none z-50"
+            className={`absolute w-full top-${height} flex flex-col bg-[#212121] border border-[#171717] shadow-md rounded-md py-2 text-gray-400 cursor-pointer select-none z-50`}
           >
             {options.map(({ title }, index) => (
               <span

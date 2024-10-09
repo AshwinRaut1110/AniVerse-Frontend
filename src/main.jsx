@@ -16,6 +16,7 @@ import EditEpisodePage from "./pages/EditEpisodePage.jsx";
 import EpisodePage from "./pages/EpisodePage.jsx";
 import BrowsePage from "./pages/BrowsePage.jsx";
 import HomePage from "./pages/HomePage.jsx";
+import ManagePage from "./pages/ManagePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -65,6 +66,10 @@ const router = createBrowserRouter([
       {
         path: "browse",
         element: <BrowsePage />,
+      },
+      {
+        path: "manage",
+        element: <ManagePage />,
       },
     ],
   },
